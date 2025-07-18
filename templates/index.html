@@ -245,14 +245,12 @@
             }
         });
 
-        // Hide suggestions when clicking outside
         document.addEventListener('click', function(e) {
             if (!input.contains(e.target) && !suggestions.contains(e.target)) {
                 suggestions.innerHTML = '';
             }
         });
 
-        // Optional: Scroll input into view on focus (for mobile)
         input.addEventListener('focus', function() {
             setTimeout(() => {
                 input.scrollIntoView({behavior: "smooth", block: "center"});

@@ -263,7 +263,11 @@ def download():
         for attendance, student in records:
             yield f'{student.student_id},{student.last_name},{student.first_name},{student.middle_i},{student.course},{student.year}\n'
 
+<<<<<<< HEAD
+    filename = f"Attendance {event.name}.csv"
+=======
     filename = f"Attendance {event.name} {event.date}.csv"
+>>>>>>> 1237854f33b26b7b8f25a423994ad8bd15e04b43
     return Response(
         generate(),
         mimetype='text/csv',
