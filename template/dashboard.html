@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDMU CS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        /* Custom Scrollbar */
+        .scroller::-webkit-scrollbar { width: 4px; }
+        .scroller::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <header class="bg-white shadow-sm z-10 p-4 shrink-0">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Welcome back,</p>
+                <h1 class="text-xl font-bold text-emerald-700 leading-tight">Admin Staff</h1>
+            </div>
+            <div class="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer">
+                <span class="material-icons-round">person</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto scroller relative">
+        <div class="max-w-md mx-auto p-4 pb-24">
+            
+            <div class="mb-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 relative overflow-hidden group">
+                    <div class="absolute top-4 right-4 flex items-center gap-1 bg-red-50 px-2 py-1 rounded-full border border-red-100">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        <span class="text-[10px] font-bold text-red-500 tracking-wide">LIVE</span>
+                    </div>
+
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Happening Now</p>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">General Assembly</h2>
+                    
+                    <div class="flex items-center gap-6 mb-6">
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Attendees</p>
+                            <p class="text-xl font-bold text-emerald-600">42</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-semibold">Started</p>
+                            <p class="text-xl font-bold text-slate-700">10:00 AM</p>
+                        </div>
+                    </div>
+
+                    <button onclick="window.location.href='kiosk.html'" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 transition-transform active:scale-[0.98]">
+                        Resume Scanning <span class="material-icons-round text-lg">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 ml-1">Quick Actions</h3>
+            <div class="grid grid-cols-2 gap-3 mb-8">
+                <button class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-start gap-3 hover:border-emerald-200 transition-colors active:scale-[0.98]">
+                    <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-round text-xl">add_circle</span>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-700 text-sm">New Event</p>
+                        <p class="text-[10px] text-slate-400 font-semibold">Create session</p>
+                    </div>
+                </button>
+
+                <button class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-start gap-3 hover:border-emerald-200 transition-colors active:scale-[0.98]">
+                    <div class="h-10 w-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center">
+                        <span class="material-icons-round text-xl">folder_shared</span>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-700 text-sm">Data Center</p>
+                        <p class="text-[10px] text-slate-400 font-semibold">Uploads & CSVs</p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="flex justify-between items-end mb-3 ml-1">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Recent History</h3>
+                <button class="text-xs font-bold text-emerald-600">View All</button>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            <span class="material-icons-round text-lg">event</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-700 text-sm">Officer Meeting</p>
+                            <p class="text-xs text-slate-400">Yesterday • 2:00 PM</p>
+                        </div>
+                    </div>
+                    <button class="p-2 text-slate-300 hover:text-emerald-600">
+                        <span class="material-icons-round">chevron_right</span>
+                    </button>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            <span class="material-icons-round text-lg">event</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-700 text-sm">Acquaintance Party</p>
+                            <p class="text-xs text-slate-400">Oct 12 • 8:00 AM</p>
+                        </div>
+                    </div>
+                    <button class="p-2 text-slate-300 hover:text-emerald-600">
+                        <span class="material-icons-round">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <nav class="bg-white border-t border-slate-200 p-2 shrink-0">
+        <div class="max-w-md mx-auto flex justify-around">
+            <button class="p-2 text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">home</span>
+                <span class="text-[10px] font-bold mt-1">Home</span>
+            </button>
+            
+            <button onclick="window.location.href='kiosk.html'" class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">qr_code_scanner</span>
+                <span class="text-[10px] font-bold mt-1">Scan</span>
+            </button>
+            
+            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">settings</span>
+                <span class="text-[10px] font-bold mt-1">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+</body>
+</html>

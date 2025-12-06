@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CSD Attendance - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; touch-action: manipulation; }
+        
+        /* Smooth dot animation */
+        .pin-dot { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pin-dot.active { background-color: #059669; border-color: #059669; transform: scale(1.2); }
+        
+        /* Keypad press effect */
+        .keypad-btn:active { background-color: #d1fae5; transform: scale(0.95); }
+
+        /* Shake animation for wrong pin */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="h-screen bg-white flex flex-col justify-between overflow-hidden text-slate-800">
+
+    <div class="flex-1 flex flex-col items-center justify-center p-6 space-y-8">
+        
+        <div class="flex flex-col items-center animate-fade-in-down">
+            <div class="h-20 w-20 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 mb-4 rotate-3">
+                <span class="material-icons-round text-4xl text-white">school</span>
+            </div>
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Computer Studies Department</h1>
+            <p class="text-slate-400 font-medium text-sm">Notre Dame of Marbel University</p>
+        </div>
+
+        <div class="space-y-4">
+            <div id="pin-display" class="flex gap-4">
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-300 pin-dot"></div>
+            </div>
+            <p id="feedback-text" class="h-4 text-center text-xs font-bold text-rose-500 opacity-0 transition-opacity">
+                Incorrect PIN
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-slate-50 pb-8 pt-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+        <div class="max-w-xs mx-auto grid grid-cols-3 gap-y-5 gap-x-6 px-6">
+            
+            <button onclick="addPin(1)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">1</button>
+            <button onclick="addPin(2)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">2</button>
+            <button onclick="addPin(3)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">3</button>
+
+            <button onclick="addPin(4)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">4</button>
+            <button onclick="addPin(5)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">5</button>
+            <button onclick="addPin(6)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">6</button>
+
+            <button onclick="addPin(7)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">7</button>
+            <button onclick="addPin(8)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">8</button>
+            <button onclick="addPin(9)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">9</button>
+
+            <div class="flex justify-center items-center">
+                <span class="material-icons-round text-slate-300 text-3xl">lock</span>
+            </div>
+            <button onclick="addPin(0)" class="keypad-btn h-16 w-full text-2xl font-bold text-slate-700 bg-white rounded-full shadow-sm border border-slate-100 flex justify-center items-center transition-all">0</button>
+            <button onclick="deletePin()" class="keypad-btn h-16 w-full text-slate-400 rounded-full flex justify-center items-center transition-all hover:text-rose-500 hover:bg-rose-50">
+                <span class="material-icons-round text-2xl">backspace</span>
+            </button>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <a href="#" class="text-[10px] font-bold text-emerald-600 tracking-widest uppercase opacity-60 hover:opacity-100">Help Center</a>
+        </div>
+    </div>
+
+    <script>
+        let currentPin = "";
+        const correctPin = "1234"; // Default PIN for demo
+        
+        const dots = document.querySelectorAll('.pin-dot');
+        const feedback = document.getElementById('feedback-text');
+        const pinDisplay = document.getElementById('pin-display');
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function addPin(num) {
+            if (currentPin.length < 4) {
+                currentPin += num;
+                updateDots();
+                
+                // Hide error message if user starts typing again
+                feedback.classList.remove('opacity-100');
+
+                // Check automatically when 4 digits reached
+                if (currentPin.length === 4) {
+                    // Small delay to let the user see the 4th dot fill
+                    setTimeout(validatePin, 100);
+                }
+            }
+        }
+
+        function deletePin() {
+            currentPin = currentPin.slice(0, -1);
+            updateDots();
+        }
+
+        function validatePin() {
+            if (currentPin === correctPin) {
+                // Success State
+                pinDisplay.classList.add('scale-110', 'transition-transform');
+                feedback.innerText = "Success!";
+                feedback.classList.replace('text-rose-500', 'text-emerald-500');
+                feedback.classList.add('opacity-100');
+
+                setTimeout(() => {
+                    // REDIRECT TO DASHBOARD
+                    window.location.href = "dashboard.html";
+                }, 300);
+            } else {
+                // Error State (Shake Animation)
+                pinDisplay.classList.add('shake');
+                feedback.innerText = "Incorrect PIN";
+                feedback.classList.replace('text-emerald-500', 'text-rose-500');
+                feedback.classList.add('opacity-100');
+                
+                // Reset Logic
+                setTimeout(() => {
+                    pinDisplay.classList.remove('shake');
+                    currentPin = "";
+                    updateDots();
+                }, 400);
+            }
+        }
+    </script>
+</body>
+</html>
