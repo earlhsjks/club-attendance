@@ -4,26 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NDMU CS Data Center</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CORE -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        
-        /* Custom Scrollbar */
-        .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
-
-        .hidden-tab { display: none; }
-        
-        /* Dashed Border Animation */
-        .dashed-zone {
-            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%2310B981FF' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-            transition: all 0.3s ease;
-        }
-        .dashed-zone:active { background-color: #ecfdf5; transform: scale(0.98); }
-    </style>
+    <!-- APPLIED -->
+     
 </head>
 <body class="h-screen flex flex-col overflow-hidden text-slate-800">
 
@@ -90,7 +78,7 @@
                 </ul>
             </div>
 
-            <div id="view-reports" class="hidden-tab">
+            <div id="view-reports" class="hidden-tab" style="display: none;">
                 <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-6 flex gap-3 items-start">
                     <span class="material-icons-round text-blue-500">info</span>
                     <div>
@@ -168,14 +156,14 @@
             const btnReports = document.getElementById('btn-reports');
 
             if (mode === 'students') {
-                viewStudents.classList.remove('hidden-tab');
-                viewReports.classList.add('hidden-tab');
+                viewStudents.style.display = 'block';
+                viewReports.style.display = 'none';
                 
                 btnStudents.className = "flex-1 py-2 rounded-lg text-sm font-semibold shadow-sm bg-white text-emerald-700 transition-all flex justify-center items-center gap-2";
                 btnReports.className = "flex-1 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all flex justify-center items-center gap-2";
             } else {
-                viewStudents.classList.add('hidden-tab');
-                viewReports.classList.remove('hidden-tab');
+                viewStudents.style.display = 'none';
+                viewReports.style.display = 'block';
 
                 btnReports.className = "flex-1 py-2 rounded-lg text-sm font-semibold shadow-sm bg-white text-emerald-700 transition-all flex justify-center items-center gap-2";
                 btnStudents.className = "flex-1 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all flex justify-center items-center gap-2";

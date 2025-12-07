@@ -4,27 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CSD Attendance - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CORE -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; touch-action: manipulation; }
-        
-        /* Smooth dot animation */
-        .pin-dot { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .pin-dot.active { background-color: #059669; border-color: #059669; transform: scale(1.2); }
-        
-        /* Keypad press effect */
-        .keypad-btn:active { background-color: #d1fae5; transform: scale(0.95); }
 
-        /* Shake animation for wrong pin */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        .shake { animation: shake 0.3s ease-in-out; }
-    </style>
+    <!-- APPLIED -->
+
 </head>
 <body class="h-screen bg-white flex flex-col justify-between overflow-hidden text-slate-800">
 
@@ -82,7 +69,6 @@
 
     <script>
         let currentPin = "";
-        const correctPin = "1234"; // Default PIN for demo
         
         const dots = document.querySelectorAll('.pin-dot');
         const feedback = document.getElementById('feedback-text');
@@ -106,10 +92,8 @@
                 // Hide error message if user starts typing again
                 feedback.classList.remove('opacity-100');
 
-                // Check automatically when 4 digits reached
                 if (currentPin.length === 4) {
-                    // Small delay to let the user see the 4th dot fill
-                    setTimeout(validatePin, 100);
+                    validatePin();
                 }
             }
         }
@@ -119,31 +103,35 @@
             updateDots();
         }
 
-        function validatePin() {
-            if (currentPin === correctPin) {
-                // Success State
-                pinDisplay.classList.add('scale-110', 'transition-transform');
-                feedback.innerText = "Success!";
-                feedback.classList.replace('text-rose-500', 'text-emerald-500');
-                feedback.classList.add('opacity-100');
+        async function validatePin() {
+            try {
+                const res = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentPin),
+                });
 
-                setTimeout(() => {
-                    // REDIRECT TO DASHBOARD
-                    window.location.href = "dashboard.html";
-                }, 300);
-            } else {
-                // Error State (Shake Animation)
-                pinDisplay.classList.add('shake');
-                feedback.innerText = "Incorrect PIN";
-                feedback.classList.replace('text-emerald-500', 'text-rose-500');
-                feedback.classList.add('opacity-100');
-                
-                // Reset Logic
-                setTimeout(() => {
-                    pinDisplay.classList.remove('shake');
-                    currentPin = "";
-                    updateDots();
-                }, 400);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    // Error State (Shake Animation)
+                    pinDisplay.classList.add('shake');
+                    feedback.innerText = "Incorrect PIN";
+                    feedback.classList.replace('text-emerald-500', 'text-rose-500');
+                    feedback.classList.add('opacity-100');
+                    
+                    // Reset Logic
+                    setTimeout(() => {
+                        pinDisplay.classList.remove('shake');
+                        currentPin = "";
+                        updateDots();
+                    }, 400);
+                    return;
+                }
+
+                window.location.href = '/dashboard';
+            } catch (err) {
+                console.error('Login error:', err);
             }
         }
     </script>

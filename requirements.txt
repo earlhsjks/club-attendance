@@ -1,5 +1,8 @@
-flask
-flask-sqlalchemy
-pandas
-waitress
-mysql-connector-python
+Flask==3.1.2
+Flask-Login==0.6.3
+Flask-Migrate==4.1.0
+Flask-SQLAlchemy==3.1.1
+Flask-Session==0.8.0
+mysql-connector-python==9.5.0
+python-dotenv==1.1.1
+pandas==2.3.3

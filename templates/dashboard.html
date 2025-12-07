@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NDMU CS Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>CSD Attendance - Dashboard</title>
 
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        
-        /* Custom Scrollbar */
-        .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
-    </style>
+    <!-- CORE -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <!-- APPLIED -->
+
 </head>
 <body class="h-screen flex flex-col overflow-hidden text-slate-800">
 
@@ -22,7 +19,7 @@
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Welcome back,</p>
-                <h1 class="text-xl font-bold text-emerald-700 leading-tight">Admin Staff</h1>
+                <h1 class="text-xl font-bold text-emerald-700 leading-tight">Attendance Committee</h1>
             </div>
             <div class="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer">
                 <span class="material-icons-round">person</span>
@@ -133,12 +130,12 @@
                 <span class="text-[10px] font-bold mt-1">Home</span>
             </button>
             
-            <button onclick="window.location.href='kiosk.html'" class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/kiosk'" class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">qr_code_scanner</span>
                 <span class="text-[10px] font-bold mt-1">Scan</span>
             </button>
             
-            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/settings'"class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">settings</span>
                 <span class="text-[10px] font-bold mt-1">Settings</span>
             </button>
