@@ -176,10 +176,18 @@ def scan_student():
             Event.end_time >= now
         ).first()
     
+    check_student = Student.query.filter(Student.student_id==student_id).first()
+
     if not active_event:
         return jsonify({
             'success': False, 
             'message': 'No event is currently active. Scan rejected.'
+        }), 403
+
+    if not check_student:
+        return jsonify({
+            'success': False, 
+            'message': 'Student record does not exist in the database.'
         }), 403
 
     existing_scan = Attendance.query.filter_by(
