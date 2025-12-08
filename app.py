@@ -6,7 +6,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import os, logging
 from routes.auth import auth_bp
-from routes.main import main_bp, login_required
+from routes.main import main_bp
 from routes.api import api_bp
 from config import Config
 from models import db
@@ -56,4 +56,5 @@ def initialize_database():
         db.create_all()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # initialize_database()
+    app.run(host="0.0.0.0", debug=True)

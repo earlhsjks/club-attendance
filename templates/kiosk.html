@@ -13,7 +13,7 @@
 
     <!-- APPLIED -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    
+
 </head>
 
 <body class="h-screen flex flex-col overflow-hidden text-slate-800">
@@ -22,13 +22,13 @@
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Current Event</p>
-                <h1 class="text-xl font-bold text-emerald-700 leading-tight">General Assembly</h1>
+                <h1 id="currentEvent" class="text-xl font-bold text-emerald-700 leading-tight">No Active Event</h1>
             </div>
             <div class="text-right">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Attendees</p>
                 <div class="flex items-center justify-end gap-1 text-emerald-600">
                     <span class="material-icons-round text-lg">groups</span>
-                    <span id="counter" class="text-2xl font-bold">42</span>
+                    <span id="counter" class="text-2xl font-bold">0</span>
                 </div>
             </div>
         </div>
@@ -49,9 +49,10 @@
             </div>
 
             <div id="view-scan" class="block animate-fade-in max-w-md mx-auto p-4">
-                <div id="reader" class="relative bg-black rounded-2xl overflow-hidden shadow-lg aspect-square mb-4 group">
-                    </div>
-                <p class="text-center text-sm text-slate-500">Point camera at Student ID Barcode/QR</p>
+                <div id="reader"
+                    class="relative bg-black rounded-2xl overflow-hidden shadow-lg aspect-square mb-4 group">
+                </div>
+                <!-- <p class="text-center text-sm text-slate-500">Point camera at Student ID Barcode/QR</p> -->
                 <p id="status-msg" class="text-center text-xs text-orange-400 mt-2 h-4"></p>
             </div>
 
@@ -62,7 +63,7 @@
                         <input type="text" id="manual-input" placeholder="e.g. 2024999"
                             class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-lg transition-all">
                     </div>
-                    <button onclick="simulateAttendance()"
+                    <button onclick="manualEntry()"
                         class="w-full mt-4 bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2">
                         Confirm Attendance <span class="material-icons-round text-sm">arrow_forward</span>
                     </button>
@@ -72,28 +73,16 @@
 
             <div class="mt-8">
                 <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">RECENT</h3>
-                <ul id="attendee-list" class="space-y-3">
-                    <li
-                        class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-sm">
-                                JD</div>
-                            <div>
-                                <p class="font-bold text-slate-700 text-sm">Juan Dela Cruz</p>
-                                <p class="text-xs text-slate-400">2023-00512 • BSCS 3</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-mono text-slate-400">10:04 AM</span>
-                    </li>
-                </ul>
+                <ul id="attendee-list" class="space-y-3"></ul>
+                <p id="no-records" class="text-sm text-slate-200 text-center mt-4">No records yet.</p>
             </div>
         </div>
     </main>
 
     <nav class="bg-white border-t border-slate-200 p-2 fixed bottom-0 w-full pb-[env(safe-area-inset-bottom)]">
         <div class="max-w-md mx-auto flex justify-around">
-            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/dashboard'"
+                class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">home</span>
                 <span class="text-[10px] font-bold mt-1">Home</span>
             </button>
@@ -101,130 +90,15 @@
                 <span class="material-icons-round">qr_code_scanner</span>
                 <span class="text-[10px] font-bold mt-1">Scan</span>
             </button>
-            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/settings'"
+                class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">settings</span>
                 <span class="text-[10px] font-bold mt-1">Settings</span>
             </button>
         </div>
     </nav>
+
+    <script src="/static/js/kiosk.js"></script>
 </body>
 
-<script>
-    function switchTab(mode) {
-        const viewScan = document.getElementById('view-scan');
-        const viewManual = document.getElementById('view-manual');
-        const btnScan = document.getElementById('btn-scan');
-        const btnManual = document.getElementById('btn-manual');
-
-        if (mode === 'scan') {
-            viewScan.style.display = 'block';
-            viewManual.style.display = 'none';
-
-            // Style Updates
-            btnScan.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
-            btnScan.classList.remove('text-slate-500');
-            btnManual.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
-            btnManual.classList.add('text-slate-500');
-        } else {
-            viewScan.style.display = 'none';
-            viewManual.style.display = 'block';
-
-            // Style Updates
-            btnManual.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
-            btnManual.classList.remove('text-slate-500');
-            btnScan.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
-            btnScan.classList.add('text-slate-500');
-        }
-    }
-
-    // 2. Simulate Attendance Entry
-    function simulateAttendance() {
-        const input = document.getElementById('manual-input');
-        const list = document.getElementById('attendee-list');
-        const counter = document.getElementById('counter');
-
-        // Mock Data
-        const id = input.value || "2023-XXXXX";
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        // Create List Item HTML
-        const newItem = `
-            <li class="bg-white p-3 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 flex items-center justify-between animate-pulse">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                        <span class="material-icons-round text-sm">check</span>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-700 text-sm">New Student</p>
-                        <p class="text-xs text-slate-400">${id} • BSCS</p>
-                    </div>
-                </div>
-                <span class="text-xs font-mono text-slate-400">${time}</span>
-            </li>
-        `;
-
-        // Insert at top
-        list.insertAdjacentHTML('afterbegin', newItem);
-
-        // Update Counter
-        let currentCount = parseInt(counter.innerText);
-        counter.innerText = currentCount + 1;
-
-        // Clear Inputs
-        input.value = "";
-
-        // Remove pulse animation after a moment
-        setTimeout(() => {
-            const item = list.firstElementChild;
-            item.classList.remove('animate-pulse');
-        }, 1000);
-    }
-
-    // 3. Simulate Scanner "Hit" (Automatic Trigger for demo)
-    // In real app, this is triggered by the QR library
-    setTimeout(() => {
-        // simulateAttendance(); // Uncomment to test auto-add on load
-    }, 2000);
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const html5QrCode = new Html5Qrcode("reader");
-        const statusMsg = document.getElementById("status-msg");
-
-        // Create a beep sound
-        const beep = new Audio("/static/sounds/beep.mp3"); // put your beep file here
-
-        const config = { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0 
-        };
-
-        // Start Camera
-        html5QrCode.start(
-            { facingMode: "environment" }, // Use back camera
-            config,
-            (decodedText, decodedResult) => {
-                // SUCCESS
-                console.log(`Code matched = ${decodedText}`, decodedResult);
-                statusMsg.className = "text-center text-xs text-green-500 mt-2";
-                statusMsg.innerText = "Success: " + decodedText;
-
-                // Play beep on success, ignore play errors
-                beep.play().catch(() => {});
-
-                // Optional: Stop scanning
-                // html5QrCode.stop();
-            },
-            (errorMessage) => {
-                // Scanning... (This runs constantly while scanning, usually ignore)
-            }
-        ).catch((err) => {
-            // Camera start failed
-            console.error(err);
-            statusMsg.innerText = "Error starting camera";
-        });
-    });
-</script>
-
-<script src="/static/js/kiosk.js"></script>
 </html>

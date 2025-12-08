@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NDMU CS Data Center</title>
+    <title>CSD Attendance - Data Center</title>
 
     <!-- CORE -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -24,7 +24,7 @@
             <div class="w-10"></div> </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto scroller relative">
+    <main class="flex-1 overflow-y-auto scroller relative pb-24">
         <div class="max-w-md mx-auto p-4 pb-24">
 
             <div class="bg-slate-200 p-1 rounded-xl flex mb-6">
@@ -38,43 +38,39 @@
 
             <div id="view-students" class="block animate-fade-in">
                 
-                <div class="dashed-zone h-32 rounded-2xl flex flex-col items-center justify-center cursor-pointer mb-6 bg-emerald-50/50">
+                <div id="uploadZone" class="dashed-zone h-32 rounded-2xl flex flex-col items-center justify-center cursor-pointer mb-2 bg-emerald-50/50">
                     <span class="material-icons-round text-3xl text-emerald-500 mb-2">cloud_upload</span>
+                    <input type="file" id="csvFile" accept=".csv" class="hidden">
                     <p class="text-sm font-bold text-emerald-700">Upload Student CSV</p>
                     <p class="text-[10px] text-emerald-600/60 mt-1">Tap to browse files</p>
                 </div>
 
+                <div class="mb-6">
+                    <p class="text-xs italic text-orange-500">
+                        Uploading new data will overwrite the entire master list.
+                    </p>
+                    <p class="text-[10px] text-rose-500 mt-1 leading-relaxed">
+                        CSV must follow this exact column order: 
+                        <span class="font-bold">student_id, full_name, sex, course, year</span>. 
+                        Do not rename columns, reorder them, or add extra columns. 
+                        Leave unwanted fields blank, do not delete them. 
+                        Any deviation from this format will prevent the upload.
+                    </p>
+                    <p id="uploadFeedback" class="text-xs italic"></p>
+                </div>
+
                 <div class="flex justify-between items-end mb-3 px-1">
                     <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Master List</h3>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md">1,240 Total</span>
+                    <span id="total" class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md">Total</span>
                 </div>
                 
                 <div class="relative mb-4">
                     <span class="material-icons-round absolute left-3 top-3 text-slate-400 text-lg">search</span>
-                    <input type="text" placeholder="Search ID or Name..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                    <input id="searchBox" type="text" placeholder="Search ID or Name..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <ul class="space-y-3">
-                    <li class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="h-9 w-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">A</div>
-                            <div>
-                                <p class="font-bold text-slate-700 text-sm">Abad, Marco</p>
-                                <p class="text-xs text-slate-400">2023-00101 • BSCS 1</p>
-                            </div>
-                        </div>
-                        <button class="text-slate-300"><span class="material-icons-round text-lg">more_vert</span></button>
-                    </li>
-                    <li class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="h-9 w-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">B</div>
-                            <div>
-                                <p class="font-bold text-slate-700 text-sm">Bautista, Sarah</p>
-                                <p class="text-xs text-slate-400">2022-04512 • BSIT 2</p>
-                            </div>
-                        </div>
-                        <button class="text-slate-300"><span class="material-icons-round text-lg">more_vert</span></button>
-                    </li>
+                <ul class="space-y-3" id="studentList">
+                    <p class="text-sm text-slate-400 text-center">No records.</p>
                 </ul>
             </div>
 
@@ -131,13 +127,15 @@
         </div>
     </main>
 
-    <nav class="bg-white border-t border-slate-200 p-2 shrink-0">
+    <nav class="bg-white border-t border-slate-200 p-2 fixed bottom-0 w-full pb-[env(safe-area-inset-bottom)]">
         <div class="max-w-md mx-auto flex justify-around">
-            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/dashboard'"
+            class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">home</span>
                 <span class="text-[10px] font-bold mt-1">Home</span>
             </button>
-            <button class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+            <button onclick="window.location.href='/kiosk'"
+            class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
                 <span class="material-icons-round">qr_code_scanner</span>
                 <span class="text-[10px] font-bold mt-1">Scan</span>
             </button>
@@ -148,27 +146,6 @@
         </div>
     </nav>
 
-    <script>
-        function switchTab(mode) {
-            const viewStudents = document.getElementById('view-students');
-            const viewReports = document.getElementById('view-reports');
-            const btnStudents = document.getElementById('btn-students');
-            const btnReports = document.getElementById('btn-reports');
-
-            if (mode === 'students') {
-                viewStudents.style.display = 'block';
-                viewReports.style.display = 'none';
-                
-                btnStudents.className = "flex-1 py-2 rounded-lg text-sm font-semibold shadow-sm bg-white text-emerald-700 transition-all flex justify-center items-center gap-2";
-                btnReports.className = "flex-1 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all flex justify-center items-center gap-2";
-            } else {
-                viewStudents.style.display = 'none';
-                viewReports.style.display = 'block';
-
-                btnReports.className = "flex-1 py-2 rounded-lg text-sm font-semibold shadow-sm bg-white text-emerald-700 transition-all flex justify-center items-center gap-2";
-                btnStudents.className = "flex-1 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all flex justify-center items-center gap-2";
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/data-management.js') }}"></script>
 </body>
 </html>
