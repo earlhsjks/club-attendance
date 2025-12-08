@@ -1,11 +1,122 @@
+// ==========================================
+// 1. GLOBAL VARIABLES & CONFIG
+// ==========================================
 const html5QrCode = new Html5Qrcode("reader");
 const statusMsg = document.getElementById("status-msg");
 const beep = new Audio("/static/sounds/beep.mp3");
 const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
-let isTransitioning = false;
 
-// Make switchTab global
-function switchTab(mode) {
+// State flags
+let isTransitioning = false; // Prevents camera hardware conflicts
+let isProcessing = false;    // Debounce flag to prevent rapid-fire scanning
+
+// ==========================================
+// 2. CORE LOGIC HELPER FUNCTIONS
+// (Must be defined BEFORE safeStartScanner)
+// ==========================================
+
+function handleScanLogic(studentBarcode) {
+    // LOCK: If already processing, ignore this scan
+    if (isProcessing) return;
+
+    // Set lock
+    isProcessing = true;
+    statusMsg.innerText = "Processing...";
+    statusMsg.className = "text-center text-xs text-blue-500 mt-2";
+
+    fetch('/api/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: studentBarcode })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            beep.play().catch(() => {});
+            statusMsg.className = "text-center text-xs text-green-500 mt-2";
+            statusMsg.innerText = data.message;
+            loadHistory();
+        } else {
+            shakeStatus(data.message);
+        }
+    })
+    .catch(err => {
+        console.error("Network error", err);
+        statusMsg.className = "text-center text-xs text-red-500 mt-2";
+        statusMsg.innerText = "Network Error";
+    })
+    .finally(() => {
+        // UNLOCK: Wait 2 seconds before allowing the next scan
+        setTimeout(() => {
+            isProcessing = false;
+            // Reset status text if it wasn't an error
+            if(statusMsg.classList.contains('text-green-500')) {
+                statusMsg.innerText = "Ready to scan";
+                statusMsg.className = "text-center text-xs text-slate-400 mt-2";
+            }
+        }, 2000);
+    });
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    handleScanLogic(decodedText);
+}
+
+function onScanFailure(errorMessage) {
+    // Do nothing (keeps feed alive)
+}
+
+function shakeStatus(msg) {
+    const statusMsg = document.getElementById('status-msg');
+    statusMsg.innerText = msg;
+    statusMsg.className = "text-center text-xs text-red-500 mt-2 shake";
+    setTimeout(() => statusMsg.classList.remove('shake'), 400);
+}
+
+// ==========================================
+// 3. CAMERA CONTROL FUNCTIONS
+// ==========================================
+
+async function safeStartScanner() {
+    if (isTransitioning) return;
+    
+    try {
+        isTransitioning = true;
+        // Now onScanSuccess is definitely defined above
+        await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure);
+        statusMsg.innerText = "Ready to scan";
+        statusMsg.className = "text-center text-xs text-slate-400 mt-2";
+    } catch(e) {
+        // If it's already running, that's fine, just ignore
+        if(e?.name !== "Html5QrcodeError") {
+            console.error("Scanner failed to start:", e);
+            statusMsg.innerText = "Camera failed to start";
+        }
+    }
+    isTransitioning = false;
+}
+
+async function safeStopScanner() {
+    if (isTransitioning) return;
+    
+    try {
+        // Check if scanning is actually active before stopping
+        if (html5QrCode.isScanning) {
+            isTransitioning = true;
+            await html5QrCode.stop();
+        }
+    } catch(e) {
+        console.error("Error stopping scanner", e);
+    }
+    isTransitioning = false;
+}
+
+// ==========================================
+// 4. UI INTERACTION (SWITCH TAB)
+// ==========================================
+
+// This function needs to be global so HTML buttons can see it
+window.switchTab = function(mode) {
     const viewScan = document.getElementById('view-scan');
     const viewManual = document.getElementById('view-manual');
     const btnScan = document.getElementById('btn-scan');
@@ -14,103 +125,38 @@ function switchTab(mode) {
     if (mode === 'scan') {
         viewScan.style.display = 'block';
         viewManual.style.display = 'none';
-        safeStartScanner();
-
+        
         btnScan.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
         btnScan.classList.remove('text-slate-500');
         btnManual.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
         btnManual.classList.add('text-slate-500');
 
+        safeStartScanner();
     } else {
         viewScan.style.display = 'none';
         viewManual.style.display = 'block';
-        safeStopScanner();
-
+        
         btnManual.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
         btnManual.classList.remove('text-slate-500');
         btnScan.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
         btnScan.classList.add('text-slate-500');
+
+        safeStopScanner();
     }
 }
 
-async function safeStopScanner() {
-    if (isTransitioning) return;
-    isTransitioning = true;
-    try { await html5QrCode.stop(); } catch(e) {}
-    isTransitioning = false;
-}
+window.manualEntry = function() {
+    const input = document.getElementById('manual-input');
+    if (!input || !input.value.trim()) return;
+    
+    handleScanLogic(input.value.trim());
+    input.value = ""; 
+};
 
-async function safeStartScanner() {
-    if (isTransitioning) return;
-    isTransitioning = true;
-    try {
-        await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure);
-    } catch(e) {
-        console.error("Scanner failed to start:", e);
-        statusMsg.innerText = "Camera failed to start";
-    }
-    isTransitioning = false;
-}
+// ==========================================
+// 5. DATA FETCHING (HISTORY & EVENTS)
+// ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
-    function restartScanner(delay=2000) {
-        setTimeout(() => {
-            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-            .catch(err => console.log("Scanner restart failed:", err));
-        }, delay);
-    }
-
-    window.manualEntry = function() {
-        const input = document.getElementById('manual-input');
-        if (!input || !input.value.trim()) return;
-        onScanSuccess(input.value.trim(), null);
-    };
-
-    function onScanSuccess(decodedText, decodedResult) {
-        const studentBarcode = decodedText;
-        html5QrCode.stop().catch(() => {});
-
-        fetch('/api/scan', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ student_id: studentBarcode })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                beep.play().catch(() => {});
-                statusMsg.className = "text-center text-xs text-green-500 mt-2";
-                statusMsg.innerText = data.message;
-                loadHistory();
-                restartScanner(1500);
-            } else {
-                statusMsg.className = "text-center text-xs text-red-500 mt-2";
-                statusMsg.innerText = data.message;
-                shakeStatus(data.message);
-                restartScanner(2500);
-            }
-        })
-        .catch(err => {
-            console.error("Network error", err);
-            restartScanner(2000);
-        });
-    }
-
-    function onScanFailure(errorMessage) {
-        // ignore scan fail
-    }
-
-    html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-    .catch(err => {
-        console.log(err);
-        statusMsg.innerText = "Camera failed to start";
-    });
-
-    checkActiveEvent();
-    loadHistory();
-});
-
-// Fetch current event status
 async function checkActiveEvent() {
     const currentEvent = document.getElementById('currentEvent');
     const counter = document.getElementById('counter');
@@ -128,18 +174,16 @@ async function checkActiveEvent() {
         }
     } catch (err) {
         console.error("Status fetch failed", err);
-        counter.innerHTML = `<p class="text-red-400 text-xs text-center">Connection Error</p>`;
     }
 }
 
 async function loadHistory() {
     try {
         const res = await fetch('/api/attendees');
-        if (!res.ok) return console.error('Error fetching attendees', res.status);
+        if (!res.ok) return;
 
         const data = await res.json();
-
-        const students = data?.students || []; // <-- safe fallback
+        const students = data?.students || [];
         const list = document.getElementById('attendee-list');
         const noRecords = document.getElementById('no-records');
 
@@ -152,7 +196,6 @@ async function loadHistory() {
             noRecords.style.display = 'none';
         }
 
-        // Only show last 20 recent scans
         const recent = students.slice(-20).reverse();
 
         recent.forEach(s => {
@@ -161,7 +204,7 @@ async function loadHistory() {
             li.innerHTML = `
                 <div class="flex items-center gap-3">
                     <div class="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-sm">
-                        ${s.name[0]}
+                        ${s.name ? s.name[0] : '?'}
                     </div>
                     <div>
                         <p class="font-bold text-slate-700 text-sm">${s.name || 'Unknown'}</p>
@@ -178,16 +221,18 @@ async function loadHistory() {
     }
 }
 
-// Shake feedback for failed scans
-function shakeStatus(msg) {
-    const statusMsg = document.getElementById('status-msg');
-    statusMsg.innerText = msg;
-    statusMsg.className = "text-center text-xs text-red-500 mt-2 shake";
+// ==========================================
+// 6. INITIALIZATION
+// ==========================================
 
-    // Remove shake class after animation
-    setTimeout(() => statusMsg.classList.remove('shake'), 400);
-}
+document.addEventListener("DOMContentLoaded", () => {
+    // Start camera immediately on load
+    safeStartScanner();
+    checkActiveEvent();
+    loadHistory();
+});
 
+// Background Refresh loop
 setInterval(() => {
     checkActiveEvent();
     loadHistory();
