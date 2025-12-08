@@ -47,6 +47,16 @@ body { font-family: 'Inter', sans-serif; touch-action: manipulation; }
     border-radius: 1rem; /* Matches rounded-2xl */
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+
 /* ========== DATA MANAGEMENT ========== */
 
 /* Dashed Border Animation */
