@@ -51,6 +51,7 @@ fileInput.addEventListener('change', async () => {
             feedback.innerText = data.message || "Upload failed";
             feedback.classList.add('text-rose-500');
         } else {
+            loadStudents();
             feedback.innerText = data.message;
             feedback.classList.add('text-emerald-500');
             fileInput.value = ""; // reset input

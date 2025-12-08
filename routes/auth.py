@@ -1,8 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for, jsonify
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 auth_bp = Blueprint('auth', __name__)
 
