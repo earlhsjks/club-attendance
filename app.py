@@ -3,7 +3,6 @@ from flask_session import Session
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, current_user
 from datetime import timedelta
-from dotenv import load_dotenv
 import os, logging
 from routes.auth import auth_bp
 from routes.main import main_bp

@@ -2,7 +2,9 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from models import db, Event, Student, Attendance
 from routes.main import auth_required
-import csv, os
+import csv, os, pytz
+
+ph_time = datetime.now(pytz.timezone("Asia/Manila"))
 
 api_bp = Blueprint('api', __name__)
 
@@ -37,8 +39,8 @@ def create_event():
 @auth_required
 def get_status():
 
-    date = datetime.now().strftime('%Y:%m:%d')
-    now = datetime.now().strftime('%H:%M:%S')
+    date = ph_time.strftime('%Y:%m:%d')
+    now = ph_time.strftime('%H:%M:%S')
 
     active_event = Event.query.filter(
             Event.date == date,
@@ -162,8 +164,8 @@ def get_data_management():
 @api_bp.route('/scan', methods=['POST'])
 @auth_required
 def scan_student():
-    date = datetime.now().strftime('%Y:%m:%d')
-    now = datetime.now().strftime('%H:%M:%S')
+    date = ph_time.strftime('%Y:%m:%d')
+    now = ph_time.strftime('%H:%M:%S')
 
     data = request.json
     student_id = data.get('student_id')
@@ -195,7 +197,7 @@ def scan_student():
     new_log = Attendance(
         student_id=student_id,
         event_id=active_event.id,
-        timestamp=datetime.now()
+        timestamp=ph_time.now()
         )
     db.session.add(new_log)
     db.session.commit()
@@ -217,8 +219,8 @@ def serialize_attendance(a):
 @api_bp.route('/attendees', methods=['GET'])
 @auth_required
 def get_attendees():
-    date = datetime.now().strftime('%Y:%m:%d')
-    now = datetime.now().strftime('%H:%M:%S')
+    date = ph_time.strftime('%Y:%m:%d')
+    now = ph_time.strftime('%H:%M:%S')
     
     active_event = Event.query.filter(
             Event.date == date,
