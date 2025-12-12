@@ -223,12 +223,8 @@ def serialize_attendance(a):
         'name': a.student.full_name,
         'student_id': a.student_id,
         'course': a.student.course,
-<<<<<<< HEAD
         'year': a.student.year,
         'time': a.timestamp.strftime("%I:%M%p").lower()
-=======
-        'year': a.student.year
->>>>>>> ee6df45eb7fdd1730f8fc2e2b18298021c86dc81
     }
 
 @api_bp.route('/attendees', methods=['GET'])
@@ -248,12 +244,7 @@ def get_attendees():
         
         return jsonify({
             'students': [serialize_attendance(a) for a in attendance],
-<<<<<<< HEAD
             'total': len(attendance)
-=======
-            'total': len(attendance),
-            'time': event.start_time.strftime("%I:%M %p").lower()
->>>>>>> ee6df45eb7fdd1730f8fc2e2b18298021c86dc81
         })
 
     active_event = Event.query.filter(
