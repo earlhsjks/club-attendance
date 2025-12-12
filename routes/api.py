@@ -54,8 +54,8 @@ def get_status():
         data = {
             'active': True,
             'name': active_event.name,
-            'start': active_event.start_time.strftime("%I:%M %p"),
-            'end': active_event.end_time.strftime("%I:%M %p"),
+            'start': active_event.start_time.strftime("%I:%M %p").lower(),
+            'end': active_event.end_time.strftime("%I:%M %p").lower(),
             'count': len(entries)
         }
 
@@ -67,7 +67,7 @@ def serfialize_events(e):
     return {
         'name': e.name,
         'date': e.date.strftime('%b %d, %Y'),
-        'time': e.start_time.strftime('%I:%m %p'),
+        'time': e.start_time.strftime('%I:%M %p'),
     }
 
 @api_bp.route('/events')
@@ -205,7 +205,7 @@ def scan_student():
     new_log = Attendance(
         student_id=student_id,
         event_id=active_event.id,
-        timestamp=ph_time.now()
+        timestamp=ph_time
         )
     db.session.add(new_log)
     db.session.commit()

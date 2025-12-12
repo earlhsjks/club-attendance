@@ -72,11 +72,11 @@ async function checkActiveEvent(e) {
                         <div class="flex items-center gap-6 mb-6">
                             <div>
                                 <p class="text-xs text-slate-400 font-semibold">Attendees</p>
-                                <p class="text-xl font-bold text-emerald-600">${data.count}</p>
+                                <p class="text-lg font-bold text-emerald-600">${data.count}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-slate-400 font-semibold">Time</p>
-                                <p class="text-xl font-bold text-slate-700">${data.start} - ${data.end}</p>
+                                <p class="text-lg font-bold text-slate-700">${data.start} - ${data.end}</p>
                             </div>
                         </div>
 
