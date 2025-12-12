@@ -125,7 +125,7 @@ async function loadEvents() {
                                     <p class="text-xs text-slate-400">${d.date} • ${d.time}</p>
                                 </div>
                             </div>
-                            <button class="p-2 text-slate-300 hover:text-emerald-600">
+                            <button class="p-2 text-slate-300 hover:text-emerald-600" onclick="window.location.href='/event-details/${d.event_id}'">
                                 <span class="material-icons-round">chevron_right</span>
                             </button>
                         </div>
@@ -144,4 +144,10 @@ async function loadEvents() {
 }
 
 // Initialize on Load
-document.addEventListener('DOMContentLoaded', checkActiveEvent, loadEvents());
+window.addEventListener("DOMContentLoaded", async () => {
+    await checkActiveEvent();
+    await loadEvents(); 
+
+    document.getElementById("app").classList.remove("opacity-0");
+    document.getElementById("app").classList.add("opacity-100");
+});

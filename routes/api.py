@@ -39,8 +39,8 @@ def create_event():
 @auth_required
 def get_status():
 
-    date = ph_time.strftime('%Y:%m:%d')
-    now = ph_time.strftime('%H:%M:%S')
+    date = ph_time.date()
+    now = ph_time.time()
 
     active_event = Event.query.filter(
             Event.date == date,
@@ -54,8 +54,8 @@ def get_status():
         data = {
             'active': True,
             'name': active_event.name,
-            'start': active_event.start_time.strftime("%I:%M %p").lower(),
-            'end': active_event.end_time.strftime("%I:%M %p").lower(),
+            'start': active_event.start_time.strftime("%I:%M%p").lower(),
+            'end': active_event.end_time.strftime("%I:%M%p").lower(),
             'count': len(entries)
         }
 
@@ -65,6 +65,7 @@ def get_status():
 
 def serfialize_events(e):
     return {
+        'event_id': e.id,
         'name': e.name,
         'date': e.date.strftime('%b %d, %Y'),
         'time': e.start_time.strftime('%I:%M %p'),
@@ -73,7 +74,7 @@ def serfialize_events(e):
 @api_bp.route('/events')
 @auth_required
 def get_events():
-    events  = Event.query.all()
+    events  = Event.query.order_by(Event.date.desc(), Event.start_time.desc()).all()
     event_list = [serfialize_events(e) for e in events]
 
     return jsonify(event_list)
@@ -81,7 +82,7 @@ def get_events():
 # IMPORT TO DB
 def import_students_from_csv(csv_file):
     # Step 1: Read all student_ids from the new CSV
-    with open(csv_file, newline='', encoding='latin-1') as file:
+    with open(csv_file, newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         new_student_ids = set()
         rows = []
@@ -153,6 +154,7 @@ def serfialize_students(e):
     }
 
 @api_bp.route('/get-dm', methods=['GET'])
+@auth_required
 def get_data_management():
     students = Student.query.order_by(Student.full_name).all()
     total = len(students)
@@ -164,12 +166,12 @@ def get_data_management():
 @api_bp.route('/scan', methods=['POST'])
 @auth_required
 def scan_student():
-    date = ph_time.strftime('%Y:%m:%d')
-    now = ph_time.strftime('%H:%M:%S')
-
     data = request.json
     student_id = data.get('student_id')
     
+    date = ph_time.date()
+    now = ph_time.time()
+
     active_event = Event.query.filter(
             Event.date == date,
             Event.start_time <= now,
@@ -227,19 +229,37 @@ def serialize_attendance(a):
 @api_bp.route('/attendees', methods=['GET'])
 @auth_required
 def get_attendees():
-    date = ph_time.strftime('%Y:%m:%d')
-    now = ph_time.strftime('%H:%M:%S')
-    
-    active_event = Event.query.filter(
-            Event.date == date,
-            Event.start_time <= now,
-            Event.end_time >= now
-        ).first()
-    
-    if active_event:
-        attendance = Attendance.query.filter(Attendance.event_id==active_event.id).all()
-        attendance_list = [serialize_attendance(a) for a in attendance]
+    selected = request.args.get('selected')
 
-        return jsonify({'students': attendance_list})
-    
-    return jsonify({'success': False, 'message': 'No records found.'})
+    date = ph_time.date()
+    now = ph_time.time()
+
+    if selected:
+        attendance = Attendance.query.filter(
+            Attendance.event_id == selected
+        ).all()
+
+        event = Event.query.filter(Event.id == selected).first()
+        
+        return jsonify({
+            'students': [serialize_attendance(a) for a in attendance],
+            'total': len(attendance),
+            'time': event.start_time.strftime("%I:%M %p").lower()
+        })
+
+    active_event = Event.query.filter(
+        Event.date == date,
+        Event.start_time <= now,
+        Event.end_time >= now
+    ).first()
+
+    if not active_event:
+        return jsonify({'success': False, 'message': 'No active event found.'})
+
+    attendance = Attendance.query.filter(
+        Attendance.event_id == active_event.id
+    ).all()
+
+    return jsonify({
+        'students': [serialize_attendance(a) for a in attendance]
+    })
