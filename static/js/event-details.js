@@ -45,7 +45,7 @@ async function loadAttendees() {
                                 </div>
                             </div>
                             <div class="text-right flex flex-col items-end">
-                                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md mb-1">12:04pm</span>
+                                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md mb-1">${s.time}</span>
                                 <!-- <button class="text-rose-400 text-[10px] font-bold hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity">REMOVE</button> -->
                             </div>
                         </div>
