@@ -12,3 +12,4 @@ logs/
 *.idea/
 flask_session/
 migrations/
+uploads/
