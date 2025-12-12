@@ -84,7 +84,8 @@ async function loadStudents() {
                 list.innerHTML += `
                     <li class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="h-9 w-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs">${s.full_name[0]}</div>
+                            <div class="h-9 w-9 min-h-[36px] min-w-[36px] max-h-[36px] max-w-[36px] bg-slate-100 rounded-full flex items-center justify-center
+                            text-slate-500 font-bold text-xs">${s.full_name[0]}</div>
                             <div>
                                 <p class="font-bold text-slate-700 text-sm">${s.full_name}</p>
                                 <p class="text-xs text-slate-400">${s.student_id} • ${s.course} ${s.year}</p>
@@ -111,4 +112,11 @@ searchBox.addEventListener('input', () => {
     });
 });
 
-document.addEventListener('DOMContentLoaded', loadStudents());
+// Initialize on Load
+window.addEventListener("load", async () => { 
+    await loadStudents();
+
+    const app = document.getElementById("app");
+    app.classList.remove("opacity-0");
+    app.classList.add("opacity-100");
+});

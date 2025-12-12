@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, session
+from models import Event
 from functools import wraps
 
 main_bp = Blueprint('main', __name__)
@@ -26,8 +27,10 @@ def kiosk():
 def settings():
     return render_template('data-management.html')
 
-@main_bp.route('/event-details')
+@main_bp.route('/event-details/<event_id>')
 @auth_required
-def event_details():
-    return render_template('event-details.html')
+def event_details(event_id):
+    event = Event.query.filter(Event.id == event_id).first()
+
+    return render_template('event-details.html', event=event)
 

@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 
-<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+<body id="app" class="h-screen flex flex-col overflow-hidden text-slate-800 opacity-0 transition-opacity duration-500">
 
     <header class="bg-white shadow-sm z-10 p-4 shrink-0">
         <div class="max-w-md mx-auto flex items-center justify-between">
@@ -19,6 +19,9 @@
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Welcome back,</p>
                 <h1 class="text-xl font-bold text-emerald-700 leading-tight">CSD Committee</h1>
             </div>
+            <button class="p-2 -ml-2 text-slate-400 opacity-0 hover:text-emerald-700">
+                <span class="material-icons-round">arrow_back</span>
+            </button>
             <div
                 class="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer">
                 <span class="material-icons-round">person</span>

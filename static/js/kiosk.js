@@ -148,9 +148,11 @@ async function checkActiveEvent() {
         if (data.active) {
             currentEvent.innerText = data.name;
             counter.innerText = data.count;
+            listTotal.innerHTML = `SHOWING 20 OF ${data.count}`;
         } else {
             currentEvent.innerText = "No Active Event";
             counter.innerText = 0;
+            listTotal.innerText = ""
         }
     } catch (err) {
         console.error("Status fetch failed", err);
@@ -171,11 +173,11 @@ async function loadHistory() {
 
         if (students.length === 0) {
             noRecords.style.display = 'block';
-            listTotal.style.display = 'none';
+            listTotal.style.display = 'none'
             return;
         } else {
             noRecords.style.display = 'none';
-            listTotal.style.display = 'block';
+            listTotal.style.display = 'block'
         }
 
         const recent = students.slice(-20).reverse();
@@ -185,7 +187,7 @@ async function loadHistory() {
             li.className = "bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between";
             li.innerHTML = `
                 <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-sm">
+                    <div class="h-9 w-9 min-h-[36px] min-w-[36px] max-h-[36px] max-w-[36px] bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500 font-bold text-xs">
                         ${s.name ? s.name[0] : '?'}
                     </div>
                     <div>
@@ -203,13 +205,17 @@ async function loadHistory() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    safeStartScanner();
-    checkActiveEvent();
-    loadHistory();
-});
-
 setInterval(() => {
     checkActiveEvent();
     loadHistory();
 }, 5000);
+
+// Initialize on Load
+window.addEventListener("DOMContentLoaded", async () => {
+    await safeStartScanner();
+    await checkActiveEvent(); 
+    await loadHistory(); 
+
+    document.getElementById("app").classList.remove("opacity-0");
+    document.getElementById("app").classList.add("opacity-100");
+});
