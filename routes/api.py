@@ -67,7 +67,7 @@ def get_status():
 
         return jsonify(data), 200
 
-    return jsonify({'active': False, 'debug': {'server': datetime.now(), 'local': ph_time}}), 200
+    return jsonify({'active': False, 'debug': {'server': datetime.now().isoformat(), 'local': ph_time.isoformat()}}), 200
 
 def serfialize_events(e):
     return {
