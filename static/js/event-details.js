@@ -24,11 +24,11 @@ async function loadAttendees() {
         timeS.innerText = time;
 
         if (students.length === 0) {
-            eof.style.display = 'block';
+            eof.style.display = 'none';
             eof.innerText = "No records yet";
             return;
         } else {
-            eof.style.display = 'none';
+            eof.style.display = 'block';
         }
 
         // Use DocumentFragment for better performance
