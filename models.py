@@ -10,6 +10,7 @@ class Student(db.Model):
     sex = db.Column(db.String(1), nullable=True)
     course = db.Column(db.String(255), nullable=True)
     year = db.Column(db.String(10), nullable=True)
+    status = db.Column(db.String(10), default='active')
 
 class Event(db.Model):
     __tablename__ = 'events'

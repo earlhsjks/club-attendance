@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from datetime import datetime
 from models import db, Event, Student, Attendance
 from routes.main import auth_required
@@ -68,7 +68,9 @@ def serfialize_events(e):
         'event_id': e.id,
         'name': e.name,
         'date': e.date.strftime('%b %d, %Y'),
+        'date_simplified': e.date.strftime('%m-%d-%Y'),
         'time': e.start_time.strftime('%I:%M %p'),
+        'present': len(Attendance.query.filter(Attendance.event_id==e.id).all())
     }
 
 @api_bp.route('/events')
@@ -79,6 +81,29 @@ def get_events():
 
     return jsonify(event_list)
 
+@api_bp.route('/event-completed')
+@auth_required
+def get_event_completed():
+
+    date = ph_time.date()
+    now = ph_time.time()
+
+    active_event = Event.query.filter(
+        Event.date == date,
+        Event.start_time <= now,
+        Event.end_time >= now
+    ).first()
+
+    if active_event:
+        events  = Event.query.filter(Event.id!=active_event.id).order_by(Event.date.desc(), Event.start_time.desc()).all()
+        event_list = [serfialize_events(e) for e in events]
+
+    if not active_event:
+        events  = Event.query.order_by(Event.date.desc(), Event.start_time.desc()).all()
+        event_list = [serfialize_events(e) for e in events]
+
+    return jsonify(event_list)
+
 # IMPORT TO DB
 def import_students_from_csv(csv_file):
     # Step 1: Read all student_ids from the new CSV
@@ -86,38 +111,44 @@ def import_students_from_csv(csv_file):
         reader = csv.DictReader(file)
         new_student_ids = set()
         rows = []
+
         for row in reader:
             student_id = row['student_id'].strip()
             if student_id:
                 new_student_ids.add(student_id)
                 rows.append(row)
 
-    # Step 2: Delete attendance for students NOT in the new list
-    Attendance.query.filter(~Attendance.student_id.in_(new_student_ids)).delete(synchronize_session=False)
-    db.session.commit()
+    # Step 2: Mark students NOT in CSV as inactive
+    Student.query.filter(
+        ~Student.student_id.in_(new_student_ids)
+    ).update(
+        {Student.status: "inactive"},
+        synchronize_session=False
+    )
 
-    # Step 3: Delete students NOT in the new list
-    Student.query.filter(~Student.student_id.in_(new_student_ids)).delete(synchronize_session=False)
-    db.session.commit()
-
-    # Step 4: Update/add students from the new list
+    # Step 3: Update existing students or insert new ones
     for row in rows:
         student_id = row['student_id'].strip()
+
         student = Student.query.filter_by(student_id=student_id).first()
+
         if student:
             student.full_name = row['full_name'].strip()
             student.sex = row.get('sex', '').strip()
             student.course = row.get('course', '').strip()
             student.year = row.get('year', '').strip()
+            student.status = "active"
         else:
             student = Student(
                 student_id=student_id,
                 full_name=row['full_name'].strip(),
                 sex=row.get('sex', '').strip(),
                 course=row.get('course', '').strip(),
-                year=row.get('year', '').strip()
+                year=row.get('year', '').strip(),
+                status="active"
             )
             db.session.add(student)
+
     db.session.commit()
 
 @api_bp.route('/upload', methods=['POST'])
@@ -156,7 +187,7 @@ def serfialize_students(e):
 @api_bp.route('/get-dm', methods=['GET'])
 @auth_required
 def get_data_management():
-    students = Student.query.order_by(Student.full_name).all()
+    students = Student.query.filter(Student.status=='active').order_by(Student.full_name).all()
     total = len(students)
 
     student_list = [serfialize_students(s) for s in students]
@@ -265,3 +296,51 @@ def get_attendees():
     return jsonify({
         'students': [serialize_attendance(a) for a in attendance]
     })
+
+import csv
+import io
+from flask import Response, request
+
+@api_bp.route('/export')
+def export_csv():
+    event_id = request.args.get('event_id', type=int)
+
+    if not event_id:
+        return {"error": "event_id is required"}, 400
+
+    event = Event.query.get(event_id)
+    if not event:
+        return {"error": "Event not found"}, 404
+
+    records = (
+        db.session.query(Attendance, Student)
+        .join(Student, Attendance.student_id == Student.student_id)
+        .filter(Attendance.event_id == event_id)
+        .all()
+    )
+
+    def generate():
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        # header
+        writer.writerow([
+            "Student ID",
+            "Full Name",
+        ])
+
+        for attendance, student in records:
+            writer.writerow([
+                student.student_id,
+                student.full_name
+            ])
+
+        return output.getvalue()
+
+    return Response(
+        generate(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=attendance.csv"
+        }
+    )

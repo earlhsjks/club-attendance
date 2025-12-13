@@ -31,6 +31,7 @@ def settings():
 @auth_required
 def event_details(event_id):
     event = Event.query.filter(Event.id == event_id).first()
+    date_simplified = event.date.strftime('%m-%d-%Y')
 
-    return render_template('event-details.html', event=event)
+    return render_template('event-details.html', event=event, date_simplified=date_simplified)
 
