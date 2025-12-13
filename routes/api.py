@@ -4,8 +4,6 @@ from models import db, Event, Student, Attendance
 from routes.main import auth_required
 import csv, os, pytz
 
-ph_time = datetime.now(pytz.timezone("Asia/Manila"))
-
 api_bp = Blueprint('api', __name__)
 
 @api_bp.route('/create-event', methods=['POST'])
@@ -39,6 +37,7 @@ def create_event():
 @auth_required
 def get_status():
 
+    ph_time = datetime.now(pytz.timezone("Asia/Manila"))
     date = ph_time.date()
     current_time = ph_time.time().replace(microsecond=0)
 
@@ -58,14 +57,13 @@ def get_status():
             'end': active_event.end_time.strftime("%I:%M%p").lower(),
             'count': len(entries),
             'debug': {
-                'server': datetime.now(),
-                'local': ph_time,
-                'event': {
-                    'start': active_event.start_time,
-                    'starendt': active_event.end_time,
-                }
+                'server': datetime.now().isoformat(),
+                'local': ph_time.isoformat(),
+                'start': active_event.start_time.strftime("%H:%M:%S"),
+                'end': active_event.end_time.strftime("%H:%M:%S")
             }
         }
+
 
         return jsonify(data), 200
 
@@ -93,6 +91,7 @@ def get_events():
 @auth_required
 def get_event_completed():
 
+    ph_time = datetime.now(pytz.timezone("Asia/Manila"))
     date = ph_time.date()
     current_time = ph_time.time().replace(microsecond=0)
 
@@ -208,6 +207,7 @@ def scan_student():
     data = request.json
     student_id = data.get('student_id')
     
+    ph_time = datetime.now(pytz.timezone("Asia/Manila"))
     date = ph_time.date()
     current_time = ph_time.time().replace(microsecond=0)
 
@@ -271,6 +271,7 @@ def serialize_attendance(a):
 def get_attendees():
     selected = request.args.get('selected')
 
+    ph_time = datetime.now(pytz.timezone("Asia/Manila"))
     date = ph_time.date()
     current_time = ph_time.time().replace(microsecond=0)
 
