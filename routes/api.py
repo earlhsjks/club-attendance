@@ -57,9 +57,7 @@ def get_status():
             'start': active_event.start_time.strftime("%I:%M%p").lower(),
             'end': active_event.end_time.strftime("%I:%M%p").lower(),
             'count': len(entries),
-            'debug': {
-                'server': ph_time,
-            }
+            'debug': {'server': datetime.now(), 'local': ph_time}
         }
 
         return jsonify(data), 200
