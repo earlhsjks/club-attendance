@@ -64,7 +64,7 @@ def get_status():
 
         return jsonify(data), 200
 
-    return jsonify({'active': False}), 200
+    return jsonify({'active': False, 'debug': {'server': ph_time}}), 200
 
 def serfialize_events(e):
     return {
