@@ -40,14 +40,15 @@ def create_event():
 def get_status():
 
     date = ph_time.date()
-    now = ph_time.time()
+    current_time = ph_time.time().replace(microsecond=0)
 
     active_event = Event.query.filter(
-            Event.date == date,
-            Event.start_time <= now,
-            Event.end_time >= now
-        ).first()
-    
+        Event.date == date,
+        Event.start_time <= current_time,
+        Event.end_time >= current_time
+    ).first()
+
+
     if active_event:
         entries = Attendance.query.filter(Attendance.event_id == active_event.id).all()
 
@@ -89,12 +90,12 @@ def get_events():
 def get_event_completed():
 
     date = ph_time.date()
-    now = ph_time.time()
+    current_time = ph_time.time().replace(microsecond=0)
 
     active_event = Event.query.filter(
         Event.date == date,
-        Event.start_time <= now,
-        Event.end_time >= now
+        Event.start_time <= current_time,
+        Event.end_time >= current_time
     ).first()
 
     if active_event:
@@ -204,13 +205,13 @@ def scan_student():
     student_id = data.get('student_id')
     
     date = ph_time.date()
-    now = ph_time.time()
+    current_time = ph_time.time().replace(microsecond=0)
 
     active_event = Event.query.filter(
-            Event.date == date,
-            Event.start_time <= now,
-            Event.end_time >= now
-        ).first()
+        Event.date == date,
+        Event.start_time <= current_time,
+        Event.end_time >= current_time
+    ).first()
     
     check_student = Student.query.filter(Student.student_id==student_id).first()
 
@@ -267,7 +268,7 @@ def get_attendees():
     selected = request.args.get('selected')
 
     date = ph_time.date()
-    now = ph_time.time()
+    current_time = ph_time.time().replace(microsecond=0)
 
     if selected:
         attendance = Attendance.query.filter(
@@ -283,10 +284,11 @@ def get_attendees():
             'time_start': event.start_time.strftime("%I:%M %p").lower()
         })
 
+
     active_event = Event.query.filter(
         Event.date == date,
-        Event.start_time <= now,
-        Event.end_time >= now
+        Event.start_time <= current_time,
+        Event.end_time >= current_time
     ).first()
 
     if not active_event:
