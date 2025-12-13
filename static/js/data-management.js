@@ -114,43 +114,47 @@ searchBox.addEventListener('input', () => {
 
 async function loadEvents() {
     const list = document.getElementById('event-list');
-    list.innerHTML = ""
+    list.innerHTML = ""; // clear
 
     try {
         const response = await fetch('/api/event-completed');
         const data = await response.json();
 
-        if (data) {
+        if (data && data.length) {
+            const fragment = document.createDocumentFragment();
+
             data.forEach(d => {
-                list.innerHTML += `
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <h4 class="font-bold text-slate-700">${d.name}</h4>
-                                    <p class="text-xs text-slate-400">${d.date}</p>
-                                </div>
-                                <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full">COMPLETED</span>
-                            </div>
-                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
-                                <div class="text-xs font-semibold text-slate-500">
-                                    <span class="text-slate-800 font-bold">${d.present}</span> Present
-                                </div>
-                                <button onclick="downloadCSV(${d.event_id}, '${d.name}', '${d.date_simplified}')" class="flex items-center gap-1 bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg active:scale-95 transition-transform">
-                                    <span class="material-icons-round text-sm">download</span> Export
-                                </button>
-                            </div>
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-slate-700">${d.name}</h4>
+                            <p class="text-xs text-slate-400">${d.date}</p>
                         </div>
-                        `;  
+                        <span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full">COMPLETED</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
+                        <div class="text-xs font-semibold text-slate-500">
+                            <span class="text-slate-800 font-bold">${d.present}</span> Present
+                        </div>
+                        <button onclick="downloadCSV(${d.event_id}, '${d.name}', '${d.date_simplified}')" class="flex items-center gap-1 bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg active:scale-95 transition-transform">
+                            <span class="material-icons-round text-sm">download</span> Export
+                        </button>
+                    </div>
+                `;
+                fragment.appendChild(div);
             });
 
+            list.appendChild(fragment);
+
         } else {
-            list.innerHTML = `
-                            <p class="text-slate-400 font-bold text-sm text-center m-4">No Records Found</p>
-                    `;
+            list.innerHTML = `<p class="text-slate-400 font-bold text-sm text-center m-4">No Records Found</p>`;
         }
+
     } catch (error) {
         console.error("Could not fetch status", error);
-        card.innerHTML = `<p class="text-red-400 text-xs text-center">Connection Error</p>`;
+        list.innerHTML = `<p class="text-red-400 text-xs text-center">Connection Error</p>`;
     }
 }
 
