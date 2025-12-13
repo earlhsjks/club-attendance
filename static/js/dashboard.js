@@ -147,6 +147,7 @@ async function loadEvents() {
 window.addEventListener("DOMContentLoaded", async () => {
     await checkActiveEvent();
     await loadEvents(); 
+    checkActiveEvent
 
     document.getElementById("app").classList.remove("opacity-0");
     document.getElementById("app").classList.add("opacity-100");
