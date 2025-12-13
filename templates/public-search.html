@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records - CSD Attendance</title>
+
+    <!-- CORE -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <!-- APPLIED -->
+
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white shadow-sm p-6 shrink-0 relative overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+        <div class="max-w-md mx-auto text-center relative z-10">
+            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">NDMU CSD Attendance</h1>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-1">Student Portal</p>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-md mx-auto p-6 flex flex-col">
+        
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-8">
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Student ID Number</label>
+            <div class="relative flex items-center">
+                <span class="material-icons-round absolute left-4 text-slate-400">search</span>
+                <input type="text" id="search-input" placeholder="e.g. 2024..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-4 font-bold text-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+            </div>
+            <button onclick="performSearch()" class="w-full mt-4 bg-emerald-600 active:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 transition-transform active:scale-[0.98] flex justify-center items-center gap-2">
+                Check My Records
+            </button>
+        </div>
+
+        <div id="main-container"></div>
+
+    </main>
+
+    <footer class="p-6 text-center shrink-0">
+        <p class="text-[10px] text-slate-400 font-medium">
+            © 2025 NDMU Computer Studies Department.<br>
+            Developed by <a href="https://github.com/earlhsjks" target="_blank" class="text-underline text-blue-400">earlhsjks</a>
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/public-search.js') }}"></script>
+</body>
+</html>

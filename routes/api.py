@@ -344,3 +344,55 @@ def export_csv():
             "Content-Disposition": "attachment; filename=attendance.csv"
         }
     )
+
+@api_bp.route('/public/search')
+def public_search():
+    student_id = request.args.get('student_id', '').strip()
+
+    student = Student.query.filter_by(
+        student_id=student_id,
+        status="active"
+    ).first()
+
+    if not student:
+        return {"success": False, "error": "Student not found"}, 200
+
+    # All events (public events only if you want)
+    events = Event.query.order_by(Event.date.desc()).all()
+
+    # Student attendance map
+    attendance_map = {
+        a.event_id: a
+        for a in Attendance.query.filter_by(student_id=student.student_id).all()
+    }
+
+    attendance = []
+
+    for event in events:
+        record = attendance_map.get(event.id)
+
+        if record:
+            attendance.append({
+                "event": event.name,
+                "date": event.date.strftime("%B %d, %Y"),
+                "status": "Present",
+                "time": record.timestamp.strftime("%I:%M %p") if record.timestamp else None
+            })
+        else:
+            attendance.append({
+                "event": event.name,
+                "date": event.date.strftime("%B %d, %Y"),
+                "status": "Absent",
+                "time": None
+            })
+
+    return {
+        "student": {
+            "success": True,
+            "student_id": student.student_id,
+            "name": student.full_name,
+            "course": student.course,
+            "year": student.year
+        },
+        "attendance": attendance
+    }

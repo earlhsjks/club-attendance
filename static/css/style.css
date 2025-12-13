@@ -67,3 +67,20 @@ body { font-family: 'Inter', sans-serif; touch-action: manipulation; }
 .dashed-zone:active { background-color: #ecfdf5; transform: scale(0.98); }
 
 /* ========== DATA MANAGEMENT ========== */
+
+/* ========== ATTENDANCE RECORDS ========== */
+
+.result-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.result-item.show-data {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animate-enter {
+    animation: fadeIn 0.4s ease-out forwards;
+}

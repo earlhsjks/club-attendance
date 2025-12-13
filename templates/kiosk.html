@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSD Attendance</title>
+    <title>Kiosk - CSD Attendance</title>
 
     <!-- CORE -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -100,7 +100,7 @@
         </div>
     </nav>
 
-    <script src="/static/js/kiosk.js"></script>
+    <script src="{{ url_for('static', filename='js/kiosk.js') }}"></script>
 </body>
 
 </html>

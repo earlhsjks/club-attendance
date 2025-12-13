@@ -35,3 +35,6 @@ def event_details(event_id):
 
     return render_template('event-details.html', event=event, date_simplified=date_simplified)
 
+@main_bp.route('/attendance-records')
+def attendance_records():
+    return render_template('public-search.html')
