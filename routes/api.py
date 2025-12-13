@@ -48,7 +48,6 @@ def get_status():
         Event.end_time >= current_time
     ).first()
 
-
     if active_event:
         entries = Attendance.query.filter(Attendance.event_id == active_event.id).all()
 
