@@ -69,21 +69,22 @@ function getAttendanceListHTML(attendance) {
 
     const listItems = attendance.map(a => {
         const isPresent = a.status === "Present";
+        const isUpcoming = a.status === "Upcoming";
         
         return `
-        <div class="result-item relative pl-6 ${isPresent ? "" : "opacity-60"}">
+        <div class="result-item relative pl-6 ${isPresent ? "" : isUpcoming ? "opacity-80" : "opacity-60"}">
             <div class="absolute -left-[9px] top-4 h-4 w-4 rounded-full 
-                ${isPresent ? "bg-emerald-500" : "bg-slate-300"} 
+                ${isPresent ? "bg-emerald-500" : isUpcoming ? "bg-blue-500" : "bg-slate-300"} 
                 border-2 border-white shadow-sm z-10">
             </div>
 
-            <div class="${isPresent ? "bg-white" : "bg-slate-50"} p-4 rounded-xl shadow-sm border border-slate-100 ${!isPresent ? "border-dashed" : ""}">
+            <div class="${isPresent ? "bg-white" : isUpcoming ? "bg-blue-50" : "bg-slate-50"} p-4 rounded-xl shadow-sm border border-slate-100 ${!isPresent && !isUpcoming ? "border-dashed" : ""}">
                 <div class="flex justify-between items-start mb-1">
-                    <h4 class="font-bold ${isPresent ? "text-slate-700" : "text-slate-500"}">
+                    <h4 class="font-bold ${isPresent ? "text-slate-700" : isUpcoming ? "text-blue-700" : "text-slate-500"}">
                         ${a.event}
                     </h4>
-                    <span class="${isPresent ? "text-emerald-600 bg-emerald-50" : "text-slate-400"} font-bold text-xs px-2 py-1 rounded-md">
-                        ${isPresent ? "Present" : "Absent"}
+                    <span class="${isPresent ? "text-emerald-600 bg-emerald-100" : isUpcoming ? "text-blue-600 bg-blue-100" : "text-slate-400 bg-slate-100"} font-bold text-xs px-2 py-1 rounded-md">
+                        ${a.status}
                     </span>
                 </div>
                 <p class="text-xs text-slate-400 mb-2">${a.date}</p>

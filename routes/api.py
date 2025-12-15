@@ -367,16 +367,15 @@ def public_search():
     if not student:
         return {"success": False, "error": "Student not found"}, 200
 
-    # All events (public events only if you want)
     events = Event.query.order_by(Event.date.desc()).all()
 
-    # Student attendance map
     attendance_map = {
         a.event_id: a
         for a in Attendance.query.filter_by(student_id=student.student_id).all()
     }
 
     attendance = []
+    today = datetime.now().date()
 
     for event in events:
         record = attendance_map.get(event.id)
@@ -389,10 +388,11 @@ def public_search():
                 "time": record.timestamp.strftime("%I:%M %p") if record.timestamp else None
             })
         else:
+            status = "Upcoming" if event.date > today else "Absent"
             attendance.append({
                 "event": event.name,
                 "date": event.date.strftime("%B %d, %Y"),
-                "status": "Absent",
+                "status": status,
                 "time": None
             })
 
