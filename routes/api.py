@@ -375,7 +375,7 @@ def public_search():
     }
 
     attendance = []
-    today = datetime.now().date()
+    today = datetime.now(pytz.timezone("Asia/Manila"))
 
     for event in events:
         record = attendance_map.get(event.id)
