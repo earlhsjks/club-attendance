@@ -72,8 +72,28 @@ async function safeStartScanner() {
     
     try {
         isTransitioning = true;
-        await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure);
-        
+
+        // Get available cameras
+        const devices = await Html5Qrcode.getCameras();
+
+        if (!devices || !devices.length) {
+            throw new Error("No cameras found");
+        }
+
+        // Pick the back camera (not front, not ultra-wide if possible)
+        // You may refine this by checking labels for "back" and avoiding "wide" keywords
+        const backCamera = devices.find(d => 
+            d.label.toLowerCase().includes("back") &&
+            !d.label.toLowerCase().includes("wide")
+        ) || devices[0]; // fallback to first camera
+
+        await html5QrCode.start(
+            { deviceId: { exact: backCamera.id } },
+            config,
+            onScanSuccess,
+            onScanFailure
+        );
+
         statusMsg.forEach(e => e.innerText = "Ready to scan");
         statusMsg.forEach(e => e.className = "text-center text-sm text-slate-400 mt-2");
 
@@ -83,6 +103,7 @@ async function safeStartScanner() {
             statusMsg.forEach(e => e.innerText = "Camera failed to start");
         }
     }
+
     isTransitioning = false;
 }
 

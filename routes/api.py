@@ -3,7 +3,6 @@ from datetime import datetime
 from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import db, User, Event, Student, Attendance, Logs
-from routes.main import auth_required
 import csv, os, pytz
 
 api_bp = Blueprint('api', __name__)
