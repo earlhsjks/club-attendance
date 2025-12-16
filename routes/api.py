@@ -13,10 +13,9 @@ def systemLogEntry(action, details):
         entry = Logs(
             action=action,
             details=details,
-            user_id=getattr(current_user, 'username', None),
+            username=getattr(current_user, 'username', None),
             timestamp=datetime.now(pytz.timezone("Asia/Manila")),
-            client_ip=request.remote_addr
-
+            client_ip=request.headers.get('X-Forwarded-For', request.remote_addr)
         )
         db.session.add(entry)
         db.session.commit()

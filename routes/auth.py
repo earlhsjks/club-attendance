@@ -31,7 +31,7 @@ def login():
 
         # Log successful login
         systemLogEntry(
-            action="Create",
+            action="Login",
             details=f"User '{admin.username}' logged in successfully"
         )
 
