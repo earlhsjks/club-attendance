@@ -195,7 +195,7 @@ def serfialize_students(e):
 @api_bp.route('/get-dm', methods=['GET'])
 @auth_required
 def get_data_management():
-    students = Student.query.filter(Student.status=='active').order_by(Student.full_name).all()
+    students = Student.query.filter(Student.status==0).order_by(Student.full_name).all()
     total = len(students)
 
     student_list = [serfialize_students(s) for s in students]
