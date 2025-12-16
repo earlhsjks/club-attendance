@@ -130,7 +130,7 @@ def import_students_from_csv(csv_file):
     Student.query.filter(
         ~Student.student_id.in_(new_student_ids)
     ).update(
-        {Student.status: "inactive"},
+        {Student.status: 0},
         synchronize_session=False
     )
 
@@ -145,7 +145,7 @@ def import_students_from_csv(csv_file):
             student.sex = row.get('sex', '').strip()
             student.course = row.get('course', '').strip()
             student.year = row.get('year', '').strip()
-            student.status = "active"
+            student.status = 1
         else:
             student = Student(
                 student_id=student_id,
@@ -153,7 +153,7 @@ def import_students_from_csv(csv_file):
                 sex=row.get('sex', '').strip(),
                 course=row.get('course', '').strip(),
                 year=row.get('year', '').strip(),
-                status="active"
+                status=1
             )
             db.session.add(student)
 
