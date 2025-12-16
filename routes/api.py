@@ -246,6 +246,8 @@ def scan_student():
     new_log = Attendance(
         student_id=student_id,
         event_id=active_event.id,
+        course=check_student.course,
+        year=check_student.year,
         timestamp=ph_time
         )
     db.session.add(new_log)

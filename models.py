@@ -1,31 +1,98 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
-class Student(db.Model):
-    __tablename__ = 'students'
+class User(db.Model):
+    __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.String(255), unique=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(200), nullable=False, default=generate_password_hash("admin123"))
+
+    logs = db.relationship(
+        'Logs',
+        back_populates='user',
+        passive_deletes=True
+    )
+
+
+class Student(db.Model):
+    __tablename__ = 'student'
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.String(255), unique=True, nullable=False)
     full_name = db.Column(db.String(500), nullable=False)
-    sex = db.Column(db.String(1), nullable=True)
-    course = db.Column(db.String(255), nullable=True)
-    year = db.Column(db.String(10), nullable=True)
-    status = db.Column(db.String(10), default='active')
+    sex = db.Column(db.String(1))
+    course = db.Column(db.String(255))
+    year = db.Column(db.String(10))
+    status = db.Column(db.Boolean, default=True)
+
+    attendances = db.relationship(
+        'Attendance',
+        back_populates='student',
+        cascade='all, delete-orphan'
+    )
+
 
 class Event(db.Model):
-    __tablename__ = 'events'
+    __tablename__ = 'event'
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    date = db.Column(db.Date)
+    name = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.Date, nullable=False)
     start_time = db.Column(db.Time)
     end_time = db.Column(db.Time)
 
+    attendances = db.relationship(
+        'Attendance',
+        back_populates='event',
+        cascade='all, delete-orphan'
+    )
+
+
 class Attendance(db.Model):
     __tablename__ = 'attendance'
+
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
-    student_id = db.Column(db.String(255), db.ForeignKey('students.student_id'), nullable=True)
+
+    event_id = db.Column(
+        db.Integer,
+        db.ForeignKey('event.id', ondelete='CASCADE'),
+        nullable=False)
+
+    student_id = db.Column(
+        db.String(255),
+        db.ForeignKey('student.student_id', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    course = db.Column(db.String(255))
+    year = db.Column(db.String(10))
     timestamp = db.Column(db.DateTime)
 
-    student = db.relationship('Student', backref='attendances')
-    event = db.relationship('Event', backref='attendances')
+    student = db.relationship('Student', back_populates='attendances')
+    event = db.relationship('Event', back_populates='attendances')
+
+
+class Logs(db.Model):
+    __tablename__ = 'system_logs'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='SET NULL'),
+        index=True,
+        nullable=True
+    )
+
+    action = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    details = db.Column(db.Text)
+    client_ip = db.Column(db.String(45))
+
+    user = db.relationship('User', back_populates='logs')
