@@ -66,7 +66,7 @@ async function handleLogin() {
             return;
         }
 
-        window.location.href = '/admin/dashboard';
+        window.location.href = '/dashboard';
     } catch (err) {
         console.error('Login error:', err);
     }

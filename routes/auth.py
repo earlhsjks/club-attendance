@@ -6,28 +6,30 @@ from models import User
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'error': 'Invalid JSON'}), 400
 
     username = data.get('user')
     password = data.get('pass')
 
-    admin = User.query.filter_by(username=username).first()
+    if not username or not password:
+        return jsonify({'success': False, 'error': 'Missing credentials'}), 400
 
+    admin = User.query.filter_by(username=username).first()
     if not admin:
         return jsonify({'success': False, 'error': 'User not found'}), 404
 
     if not check_password_hash(admin.password, password):
         return jsonify({'success': False, 'error': 'Incorrect password'}), 401
 
-    login_user(admin)
+    try:
+        login_user(admin)
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Login failed: {str(e)}'}), 500
 
-    # systemLogEntry(
-    #     action="Login",
-    #     details=f"Admin {admin.first_name} {admin.last_name} logged in to Admin portal."
-    # )
-    
     return jsonify({'success': True, 'message': f'Welcome {admin.first_name}!'}), 200
 
 @auth_bp.route('/logout', methods=['GET','POST'])
