@@ -410,9 +410,8 @@ def public_search():
         "attendance": attendance
     }
 
-@api_bp.route('/api/get-user/<int:user_id>', methods=['GET'])
+@api_bp.route('/get-user/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    # Fetch user from SQL Database
     user = db.session.get(User, user_id) 
     
     if not user:
@@ -427,8 +426,7 @@ def get_user(user_id):
         "middle_name": "" 
     })
 
-# 2. API: Change Password
-@api_bp.route('/api/change-password', methods=['POST'])
+@api_bp.route('/change-password', methods=['POST'])
 def change_password():
     data = request.get_json()
     

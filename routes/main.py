@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, session
-from flask_login import login_required 
+from flask_login import login_required, current_user
 from models import Event
 from functools import wraps
 
@@ -39,7 +39,7 @@ def event_details(event_id):
 @main_bp.route('/profile')
 @login_required
 def profle_page():
-    return render_template('profile.html')
+    return render_template('profile.html', current_user=current_user)
 
 @main_bp.route('/attendance-records')
 def attendance_records():

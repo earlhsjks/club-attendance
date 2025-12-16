@@ -6,16 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - CSD Attendance</title>
     <link rel="icon" href="{{ url_for('static', filename='image/CSDSC_Logo.jpg') }}">
-    
+
+    <!-- CORE -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- APPLIED -->
+    
 </head>
 
 <body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800">
 
-    <input type="hidden" id="userId" value="123"> <div id="successAlert" class="fixed top-4 left-4 right-4 z-50 hidden">
+    <input type="hidden" id="userId" value="{{ current_user.id }}"> <div id="successAlert" class="fixed top-4 left-4 right-4 z-50 hidden">
         </div>
 
     <header class="bg-white shadow-sm z-10 p-4 shrink-0">
