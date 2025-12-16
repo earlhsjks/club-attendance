@@ -88,7 +88,7 @@ function getAttendanceListHTML(attendance) {
                     </span>
                 </div>
                 <p class="text-xs text-slate-400 mb-2">${a.date}</p>
-                ${a.time ? `<p class="text-[10px] font-mono text-slate-400 bg-slate-50 inline-block px-1.5 py-0.5 rounded">Time: ${a.time}</p>` : ""}
+                ${a.time ? `<p class="text-[10px] font-mono text-slate-400 bg-slate-50 inline-block px-1.5 py-0.5 rounded">Timestamp: ${a.time}</p>` : ""}
             </div>
         </div>
         `;
