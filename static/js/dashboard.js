@@ -144,7 +144,7 @@ async function loadEvents() {
 }
 
 document.getElementById('profile').addEventListener('click', () => {
-    open("/profile")
+    window.open("/profile", "_self")
 });
 
 // Initialize on Load
