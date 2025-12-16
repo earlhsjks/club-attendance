@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - CSD Attendance</title>
+    <link rel="icon" href="{{ url_for('static', filename='image/CSDSC_Logo.jpg') }}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <input type="hidden" id="userId" value="123"> <div id="successAlert" class="fixed top-4 left-4 right-4 z-50 hidden">
+        </div>
+
+    <header class="bg-white shadow-sm z-10 p-4 shrink-0">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <button onclick="window.history.back()" class="p-2 -ml-2 text-slate-400 hover:text-emerald-700 transition-colors">
+                <span class="material-icons-round">arrow_back</span>
+            </button>
+            <h1 class="text-lg font-bold text-slate-800">My Profile</h1>
+            <div class="w-10"></div> </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto scroller pb-24">
+        <div class="max-w-md mx-auto p-4 space-y-6">
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 flex flex-col items-center text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+                
+                <div id="initials" class="h-20 w-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-2xl font-bold mb-3 border-4 border-white shadow-sm ring-1 ring-emerald-100">
+                    --
+                </div>
+                
+                <h2 id="fullName" class="text-xl font-bold text-slate-800">Loading User...</h2>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Officer Account</p>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 ml-1">Personal Information</h3>
+                
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Username</label>
+                        <div class="relative">
+                            <span class="material-icons-round absolute left-3 top-3 text-slate-400 text-lg">badge</span>
+                            <input type="text" id="username" readonly 
+                                class="w-full bg-slate-50 border-none rounded-xl pl-10 pr-4 py-3 text-sm text-slate-500 font-medium cursor-not-allowed focus:ring-0">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">First Name</label>
+                        <input type="text" id="firstName" readonly 
+                            class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm text-slate-500 font-medium cursor-not-allowed focus:ring-0">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Middle Name</label>
+                            <input type="text" id="middleName" readonly 
+                                class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm text-slate-500 font-medium cursor-not-allowed focus:ring-0">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Last Name</label>
+                            <input type="text" id="lastName" readonly 
+                                class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-sm text-slate-500 font-medium cursor-not-allowed focus:ring-0">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <form id="passwordForm" onsubmit="event.preventDefault();">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 ml-1">Security</h3>
+                
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-5">
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Current Password</label>
+                        <div class="relative group">
+                            <span class="material-icons-round absolute left-3 top-3 text-slate-400 text-lg group-focus-within:text-emerald-500 transition-colors">lock</span>
+                            <input type="password" id="currentPassword" placeholder="••••••••"
+                                class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold transition-shadow">
+                            
+                            <button type="button" id="toggleCurrentPassword" class="absolute right-3 top-3 text-slate-400 hover:text-emerald-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">New Password</label>
+                        <div class="relative group">
+                            <span class="material-icons-round absolute left-3 top-3 text-slate-400 text-lg group-focus-within:text-emerald-500 transition-colors">vpn_key</span>
+                            <input type="password" id="newPassword" placeholder="Minimum 8 characters"
+                                class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold transition-shadow">
+                            
+                            <button type="button" id="toggleNewPassword" class="absolute right-3 top-3 text-slate-400 hover:text-emerald-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+
+                        <div id="passwordStrength" class="mt-2 hidden">
+                            <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="strengthBar" class="h-full w-0 bg-red-500 transition-all duration-300"></div>
+                            </div>
+                            <p id="strengthText" class="text-[10px] font-bold text-right mt-1 text-slate-400">Weak</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Confirm Password</label>
+                        <div class="relative group">
+                            <span class="material-icons-round absolute left-3 top-3 text-slate-400 text-lg group-focus-within:text-emerald-500 transition-colors">check_circle</span>
+                            <input type="password" id="confirmPassword" placeholder="Repeat new password"
+                                class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold transition-shadow">
+                            
+                            <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-3 text-slate-400 hover:text-emerald-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" id="changePassword"
+                        class="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+                        <i class="fas fa-key"></i>
+                        <span>Update Password</span>
+                    </button>
+
+                </div>
+            </form>
+            
+            <div class="h-4"></div> </div>
+    </main>
+
+    <nav class="bg-white border-t border-slate-200 p-2 fixed bottom-0 w-full pb-[env(safe-area-inset-bottom)] z-20">
+        <div class="max-w-md mx-auto flex justify-around">
+            <button onclick="window.location.href='/dashboard'" 
+                class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center transition-colors">
+                <span class="material-icons-round">home</span>
+                <span class="text-[10px] font-bold mt-1">Home</span>
+            </button>
+
+            <button onclick="window.location.href='/kiosk'"
+                class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center transition-colors">
+                <span class="material-icons-round">qr_code_scanner</span>
+                <span class="text-[10px] font-bold mt-1">Scan</span>
+            </button>
+
+            <button class="p-2 text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">settings</span>
+                <span class="text-[10px] font-bold mt-1">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+</body>
+</html>

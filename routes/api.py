@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, Response
 from datetime import datetime
-from models import db, Event, Student, Attendance
+from werkzeug.security import check_password_hash, generate_password_hash
+from models import db, User, Event, Student, Attendance
 from routes.main import auth_required
 import csv, os, pytz
 
@@ -408,3 +409,59 @@ def public_search():
         },
         "attendance": attendance
     }
+
+@api_bp.route('/api/get-user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    # Fetch user from SQL Database
+    user = db.session.get(User, user_id) 
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    return jsonify({
+        "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        # Your model doesn't have middle_name, so we send an empty string
+        # to prevent the Frontend JS from showing "undefined"
+        "middle_name": "" 
+    })
+
+# 2. API: Change Password
+@api_bp.route('/api/change-password', methods=['POST'])
+def change_password():
+    data = request.get_json()
+    
+    user_id = data.get('userId')
+    current_pw = data.get('currentPassword')
+    new_pw = data.get('newPassword')
+    confirm_pw = data.get('confirmPassword')
+
+    # 1. Basic Validation
+    if not all([user_id, current_pw, new_pw]):
+        return jsonify({"success": False, "error": "Missing fields"}), 400
+
+    if new_pw != confirm_pw:
+        return jsonify({"success": False, "error": "Passwords do not match"}), 400
+
+    # 2. Find User in DB
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+
+    # 3. Verify Old Password (Hash Check)
+    if not check_password_hash(user.password, current_pw):
+        return jsonify({"success": False, "error": "Incorrect current password"}), 401
+
+    # 4. Save New Password (Hash It)
+    try:
+        user.password = generate_password_hash(new_pw)
+        db.session.commit()
+        
+        print(f"Password updated for user {user.username}")
+        return jsonify({"success": True, "message": "Password updated successfully"})
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database Error: {e}")
+        return jsonify({"success": False, "error": "Database error occurred"}), 500

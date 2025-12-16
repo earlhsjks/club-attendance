@@ -143,6 +143,10 @@ async function loadEvents() {
     }
 }
 
+document.getElementById('profile').addEventListener('click' () => {
+    
+})
+
 // Initialize on Load
 window.addEventListener("DOMContentLoaded", async () => {
     await checkActiveEvent();

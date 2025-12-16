@@ -38,3 +38,7 @@ def event_details(event_id):
 @main_bp.route('/attendance-records')
 def attendance_records():
     return render_template('public-search.html')
+
+@main_bp.route('/profile')
+def profle_page():
+    return render_template('profile.html')
