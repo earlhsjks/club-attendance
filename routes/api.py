@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, Response
 from datetime import datetime
+from flask_login import login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import db, User, Event, Student, Attendance
 from routes.main import auth_required
@@ -8,7 +9,7 @@ import csv, os, pytz
 api_bp = Blueprint('api', __name__)
 
 @api_bp.route('/create-event', methods=['POST'])
-@auth_required
+@login_required
 def create_event():
     data = request.get_json()
 
@@ -35,7 +36,7 @@ def create_event():
         return jsonify({'success': False, 'error': f"Error creating event: {str(e)}"}), 500
 
 @api_bp.route('/status')
-@auth_required
+@login_required
 def get_status():
 
     ph_time = datetime.now(pytz.timezone("Asia/Manila"))
@@ -81,7 +82,7 @@ def serfialize_events(e):
     }
 
 @api_bp.route('/events')
-@auth_required
+@login_required
 def get_events():
     events  = Event.query.order_by(Event.date.desc(), Event.start_time.desc()).all()
     event_list = [serfialize_events(e) for e in events]
@@ -89,7 +90,7 @@ def get_events():
     return jsonify(event_list)
 
 @api_bp.route('/event-completed')
-@auth_required
+@login_required
 def get_event_completed():
 
     ph_time = datetime.now(pytz.timezone("Asia/Manila"))
@@ -160,7 +161,7 @@ def import_students_from_csv(csv_file):
     db.session.commit()
 
 @api_bp.route('/upload', methods=['POST'])
-@auth_required
+@login_required
 def upload_students_csv():
     if 'csv_file' not in request.files:
         return jsonify({'success': False, 'message': 'No file part'}), 400
@@ -193,7 +194,7 @@ def serfialize_students(e):
     }
 
 @api_bp.route('/get-dm', methods=['GET'])
-@auth_required
+@login_required
 def get_data_management():
     students = Student.query.filter(Student.status==True).order_by(Student.full_name).all()
     total = len(students)
@@ -203,7 +204,7 @@ def get_data_management():
     return jsonify({'students': student_list, 'total': total})
 
 @api_bp.route('/scan', methods=['POST'])
-@auth_required
+@login_required
 def scan_student():
     data = request.json
     student_id = data.get('student_id')
@@ -270,7 +271,7 @@ def serialize_attendance(a):
     }
 
 @api_bp.route('/attendees', methods=['GET'])
-@auth_required
+@login_required
 def get_attendees():
     selected = request.args.get('selected')
 
@@ -411,6 +412,7 @@ def public_search():
     }
 
 @api_bp.route('/get-user/<int:user_id>', methods=['GET'])
+@login_required
 def get_user(user_id):
     user = db.session.get(User, user_id) 
     
@@ -427,6 +429,7 @@ def get_user(user_id):
     })
 
 @api_bp.route('/change-password', methods=['POST'])
+@login_required
 def change_password():
     data = request.get_json()
     

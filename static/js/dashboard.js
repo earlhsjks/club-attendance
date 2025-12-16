@@ -149,10 +149,9 @@ document.getElementById('profile').addEventListener('click', () => {
 
 // Initialize on Load
 window.addEventListener("DOMContentLoaded", async () => {
-    await checkActiveEvent();
     await loadEvents(); 
     await checkActiveEvent();
-
+    
     document.getElementById("app").classList.remove("opacity-0");
     document.getElementById("app").classList.add("opacity-100");
 });
