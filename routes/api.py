@@ -418,7 +418,7 @@ def public_search():
 
     student = Student.query.filter_by(
         student_id=student_id,
-        status="active"
+        status=True
     ).first()
 
     if not student:
