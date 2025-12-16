@@ -1,12 +1,27 @@
 from flask import Blueprint, request, jsonify, Response
 from datetime import datetime
-from flask_login import login_required
+from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from models import db, User, Event, Student, Attendance
+from models import db, User, Event, Student, Attendance, Logs
 from routes.main import auth_required
 import csv, os, pytz
 
 api_bp = Blueprint('api', __name__)
+
+def systemLogEntry(action, details):
+    try:
+        entry = Logs(
+            action=action,
+            details=details,
+            user_id=getattr(current_user, 'username', None),
+            timestamp=datetime.now(pytz.timezone("Asia/Manila")),
+            client_ip=request.remote_addr
+
+        )
+        db.session.add(entry)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
 
 @api_bp.route('/create-event', methods=['POST'])
 @login_required
@@ -29,12 +44,23 @@ def create_event():
         db.session.add(new_event)
         db.session.commit()
 
+        systemLogEntry(
+            action="Create",
+            details=f"Event '{name}' created on {date} from {start} to {end}"
+        )
+
         return jsonify({'success': True, 'message': 'Event created successfully!'}), 200
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'error': f"Error creating event: {str(e)}"}), 500
 
+        systemLogEntry(
+            action="Create Failed",
+            details=f"Failed to create event '{name}'. Error: {str(e)}"
+        )
+
+        return jsonify({'success': False, 'error': f"Error creating event: {str(e)}"}), 500
+    
 @api_bp.route('/status')
 @login_required
 def get_status():
@@ -164,24 +190,40 @@ def import_students_from_csv(csv_file):
 @login_required
 def upload_students_csv():
     if 'csv_file' not in request.files:
+        systemLogEntry(
+            action="Create",
+            details="Student CSV upload failed, no file part in request"
+        )
         return jsonify({'success': False, 'message': 'No file part'}), 400
 
     file = request.files['csv_file']
 
     if file.filename == '':
+        systemLogEntry(
+            action="Create",
+            details="Student CSV upload failed, no file selected"
+        )
         return jsonify({'success': False, 'message': 'No selected file'}), 400
 
     try:
-        # save uploaded file
         filepath = os.path.join('uploads', 'uploaded_students.csv')
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         file.save(filepath)
 
-        # import CSV
         import_students_from_csv(filepath)
 
+        systemLogEntry(
+            action="Create",
+            details=f"Students imported successfully via CSV ({file.filename})"
+        )
+
         return jsonify({'success': True, 'message': 'Students imported successfully!'}), 200
+
     except Exception as e:
+        systemLogEntry(
+            action="Create/Update",
+            details=f"Student CSV import failed. Error: {str(e)}"
+        )
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -219,7 +261,7 @@ def scan_student():
         Event.end_time >= current_time
     ).first()
     
-    check_student = Student.query.filter(Student.student_id==student_id).first()
+    check_student = Student.query.filter(Student.student_id == student_id).first()
 
     if not active_event:
         return jsonify({
@@ -244,16 +286,20 @@ def scan_student():
             'message': 'Student already scanned.'
         }), 409
 
-    # 3. Save the Scan
     new_log = Attendance(
         student_id=student_id,
         event_id=active_event.id,
         course=check_student.course,
         year=check_student.year,
         timestamp=ph_time
-        )
+    )
     db.session.add(new_log)
     db.session.commit()
+
+    systemLogEntry(
+        action="Create",
+        details=f"Attendance recorded. Student ID: {student_id}, Event ID: {active_event.id}"
+    )
     
     return jsonify({
         'success': True, 
@@ -316,6 +362,7 @@ import io
 from flask import Response, request
 
 @api_bp.route('/export')
+@api_bp.route('/export')
 def export_csv():
     event_id = request.args.get('event_id', type=int)
 
@@ -351,8 +398,16 @@ def export_csv():
 
         return output.getvalue()
 
+    csv_data = generate()
+
+    # Log the successful export
+    systemLogEntry(
+        action="Create",
+        details=f"Attendance CSV exported for Event ID: {event_id}, Records: {len(records)}"
+    )
+
     return Response(
-        generate(),
+        csv_data,
         mimetype="text/csv",
         headers={
             "Content-Disposition": "attachment; filename=attendance.csv"
@@ -458,8 +513,13 @@ def change_password():
     try:
         user.password = generate_password_hash(new_pw)
         db.session.commit()
-        
-        print(f"Password updated for user {user.username}")
+
+        # Log only on success
+        systemLogEntry(
+            action="Update",
+            details=f"Password updated successfully for user '{user.username}' (ID: {user.id})"
+        )
+
         return jsonify({"success": True, "message": "Password updated successfully"})
         
     except Exception as e:

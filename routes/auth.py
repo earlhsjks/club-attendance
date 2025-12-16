@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 import os
 from models import User
+from  routes.api import systemLogEntry  
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -27,6 +28,13 @@ def login():
 
     try:
         login_user(admin)
+
+        # Log successful login
+        systemLogEntry(
+            action="Create",
+            details=f"User '{admin.username}' logged in successfully"
+        )
+
     except Exception as e:
         return jsonify({'success': False, 'error': f'Login failed: {str(e)}'}), 500
 
