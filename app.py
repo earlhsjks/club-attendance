@@ -45,8 +45,8 @@ class User(UserMixin):
         self.id = id
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.filter_by(username=username).first()
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Database initialization
 def initialize_database():
