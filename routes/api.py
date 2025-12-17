@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, Response
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import db, User, Event, Student, Attendance, Logs
@@ -508,3 +508,31 @@ def change_password():
         db.session.rollback()
         print(f"Database Error: {e}")
         return jsonify({"success": False, "error": "Database error occurred"}), 500
+
+COLOR_MAP = {
+    "Login": "emerald",
+    "Create": "blue",
+    "Update": "amber",
+    "Delete": "rose"
+}
+
+def serialize_log(e):
+    return {
+        'user': e.username,
+        'type': e.type,
+        'action': e.action,
+        'details': e.details,
+        'ip': e.client_ip,
+        'color': COLOR_MAP.get(e.type, "slate"), 
+        'time': e.timestamp.strftime('%I:%M %p'),
+        'date': e.timestamp.strftime('%b %d, %Y')
+    }
+
+@api_bp.route('/logs')
+@login_required
+def get_audits():
+    thirty_days_ago = datetime.now() - timedelta(days=30)
+    logs = Logs.query.filter(Logs.timestamp >= thirty_days_ago).order_by(Logs.timestamp.desc()).all()
+    
+    recent_logs = [serialize_log(l) for l in logs]
+    return jsonify(recent_logs)

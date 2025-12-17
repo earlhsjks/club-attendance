@@ -44,3 +44,8 @@ def profle_page():
 @main_bp.route('/attendance-records')
 def attendance_records():
     return render_template('public-search.html')
+
+@main_bp.route('/audit-logs')
+@login_required
+def audit_logs():
+    return render_template('audit-logs.html')

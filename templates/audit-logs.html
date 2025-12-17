@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs - CSD Attendance</title>
+
+    <!-- CORE -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .scroller::-webkit-scrollbar { width: 4px; }
+        .scroller::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        /* Monospace font for IP and Details */
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <header class="bg-white shadow-sm z-10 p-4 shrink-0">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <button onclick="window.history.back()" class="p-2 -ml-2 text-slate-400 hover:text-emerald-600 transition-colors">
+                <span class="material-icons-round">arrow_back</span>
+            </button>
+            <h1 class="text-xl font-bold text-slate-800 leading-tight">System Logs</h1>
+            <button class="p-2 -mr-2 text-emerald-600 font-bold text-xs uppercase tracking-wide">
+                Export
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto scroller relative">
+        <div class="max-w-md mx-auto p-4 pb-24">
+
+            <div class="relative mb-6">
+                <span class="material-icons-round absolute left-3 top-2.5 text-slate-400 text-lg">search</span>
+                <input type="text" placeholder="Search user, action or IP..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+            </div>
+
+            <div class="space-y-3">
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-emerald-500 flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-100 text-emerald-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Login</span>
+                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400">10:42 AM</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
+                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Successful Login</p>
+                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Details:</span> Via Auth Pin Pad</p>
+                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
+                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
+                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500 flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-100 text-blue-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Create</span>
+                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400">10:45 AM</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
+                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Create Event</p>
+                        <p class="text-xs text-slate-600 font-mono text-blue-600">"General Assembly"</p>
+                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
+                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
+                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-400 flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-100 text-amber-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Update</span>
+                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400">11:02 AM</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
+                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Manual Attendance</p>
+                        <p class="text-xs text-slate-600 mb-1">Added <span class="font-mono">2023-00512</span> to "Gen Assembly"</p>
+                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
+                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
+                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-rose-500 flex flex-col gap-2">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-rose-100 text-rose-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Delete</span>
+                            <span class="font-bold text-slate-700 text-sm">Super Admin</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400">Yesterday</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
+                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Delete Attendance Record</p>
+                        <p class="text-xs text-slate-600 mb-1">Removed <span class="font-mono">2021-00111</span> from "IT Week"</p>
+                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
+                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
+                            <span class="text-[10px] font-mono text-slate-500">10.0.0.15</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-6">
+                <p class="text-[10px] text-slate-400 font-mono">End of logs (Last 30 days)</p>
+            </div>
+
+        </div>
+    </main>
+
+    <nav hidden class="bg-white border-t border-slate-200 p-2 shrink-0">
+        <div class="max-w-md mx-auto flex justify-around">
+            <button onclick="window.location.href='dashboard.html'" class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">home</span>
+                <span class="text-[10px] font-bold mt-1">Home</span>
+            </button>
+            <button onclick="window.location.href='kiosk.html'" class="p-2 text-slate-400 hover:text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">qr_code_scanner</span>
+                <span class="text-[10px] font-bold mt-1">Scan</span>
+            </button>
+            <button onclick="window.location.href='settings.html'" class="p-2 text-emerald-600 flex flex-col items-center">
+                <span class="material-icons-round">settings</span>
+                <span class="text-[10px] font-bold mt-1">Settings</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="{{ url_for('static', filename='js/audit_logs.js') }}"></script>
+</body>
+</html>
