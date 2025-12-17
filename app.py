@@ -32,7 +32,7 @@ migrate = Migrate(app, db)
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'auth.login'  # Point to your auth blueprint login route
+login_manager.login_view = 'index' 
 
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -50,30 +50,6 @@ def index():
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
     return render_template('auth.html')
-
-
-# Example login route (can be in auth_bp)
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    if not data:
-        return jsonify({'success': False, 'error': 'Invalid JSON'}), 400
-
-    username = data.get('user')
-    password = data.get('pass')
-
-    if not username or not password:
-        return jsonify({'success': False, 'error': 'Missing credentials'}), 400
-
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        return jsonify({'success': False, 'error': 'User not found'}), 404
-
-    if not check_password_hash(user.password, password):
-        return jsonify({'success': False, 'error': 'Incorrect password'}), 401
-
-    login_user(user)
-    return jsonify({'success': True, 'message': f'Welcome {user.first_name}!'}), 200
 
 
 # Example logout route
