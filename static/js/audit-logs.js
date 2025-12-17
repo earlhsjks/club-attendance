@@ -51,7 +51,7 @@ function loadLogs() {
                             <span class="bg-${log.color}-100 text-${log.color}-600 p-1 rounded text-xs font-bold uppercase tracking-wider">${log.type}</span>
                             <span class="font-bold text-slate-700 text-sm">${log.user}</span>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-400">${log.time}</span>
+                        <span class="text-[10px] font-bold text-slate-400">${log.date} ${log.time}</span>
                     </div>
                     <div class="bg-slate-50 p-2 rounded border border-slate-100">
                         <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> ${log.action}</p>
