@@ -379,7 +379,6 @@ def export_csv():
                 student.student_id,
                 student.full_name
             ])
-
         return output.getvalue()
 
     csv_data = generate()
@@ -511,6 +510,7 @@ def change_password():
 
 COLOR_MAP = {
     "Login": "emerald",
+    "Search": "blue",
     "Create": "blue",
     "Update": "amber",
     "Delete": "rose"
@@ -518,12 +518,13 @@ COLOR_MAP = {
 
 def serialize_log(e):
     return {
+        'id': e.id,
         'user': e.username,
-        'type': e.type,
+        'type': e.action,
         'action': e.action,
         'details': e.details,
         'ip': e.client_ip,
-        'color': COLOR_MAP.get(e.type, "slate"), 
+        'color': COLOR_MAP.get(e.action, "slate"),
         'time': e.timestamp.strftime('%I:%M %p'),
         'date': e.timestamp.strftime('%b %d, %Y')
     }
@@ -534,5 +535,5 @@ def get_audits():
     thirty_days_ago = datetime.now() - timedelta(days=30)
     logs = Logs.query.filter(Logs.timestamp >= thirty_days_ago).order_by(Logs.timestamp.desc()).all()
     
-    recent_logs = [serialize_log(l) for l in logs]
+    recent_logs = [serialize_log(e) for e in logs]
     return jsonify(recent_logs)

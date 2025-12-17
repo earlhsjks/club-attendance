@@ -43,83 +43,7 @@
             </div>
 
             <div class="space-y-3">
-
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-emerald-500 flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-emerald-100 text-emerald-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Login</span>
-                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400">10:42 AM</span>
-                    </div>
-                    
-                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
-                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Successful Login</p>
-                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Details:</span> Via Auth Pin Pad</p>
-                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
-                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
-                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500 flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-blue-100 text-blue-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Create</span>
-                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400">10:45 AM</span>
-                    </div>
-                    
-                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
-                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Create Event</p>
-                        <p class="text-xs text-slate-600 font-mono text-blue-600">"General Assembly"</p>
-                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
-                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
-                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-amber-400 flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-amber-100 text-amber-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Update</span>
-                            <span class="font-bold text-slate-700 text-sm">Admin Staff</span>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400">11:02 AM</span>
-                    </div>
-                    
-                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
-                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Manual Attendance</p>
-                        <p class="text-xs text-slate-600 mb-1">Added <span class="font-mono">2023-00512</span> to "Gen Assembly"</p>
-                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
-                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
-                            <span class="text-[10px] font-mono text-slate-500">192.168.1.42</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-rose-500 flex flex-col gap-2">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-rose-100 text-rose-600 p-1 rounded text-xs font-bold uppercase tracking-wider">Delete</span>
-                            <span class="font-bold text-slate-700 text-sm">Super Admin</span>
-                        </div>
-                        <span class="text-[10px] font-bold text-slate-400">Yesterday</span>
-                    </div>
-                    
-                    <div class="bg-slate-50 p-2 rounded border border-slate-100">
-                        <p class="text-xs text-slate-600 mb-1"><span class="font-bold">Action:</span> Delete Attendance Record</p>
-                        <p class="text-xs text-slate-600 mb-1">Removed <span class="font-mono">2021-00111</span> from "IT Week"</p>
-                        <div class="flex items-center gap-1 mt-1 pt-1 border-t border-slate-200/50">
-                            <span class="material-icons-round text-[10px] text-slate-400">dns</span>
-                            <span class="text-[10px] font-mono text-slate-500">10.0.0.15</span>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- JS -->
             </div>
             
             <div class="text-center mt-6">
@@ -146,6 +70,6 @@
         </div>
     </nav>
 
-    <script src="{{ url_for('static', filename='js/audit_logs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/audit-logs.js') }}"></script>
 </body>
 </html>
