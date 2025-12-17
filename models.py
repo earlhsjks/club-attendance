@@ -14,13 +14,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200), nullable=False, default=generate_password_hash("admin123"))
 
-    logs = db.relationship(
-        'Logs',
-        back_populates='user',
-        passive_deletes=True
-    )
-
-
 class Student(db.Model):
     __tablename__ = 'student'
 
