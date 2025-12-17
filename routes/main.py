@@ -16,7 +16,7 @@ def auth_required(f):
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', current_user=current_user)
 
 @main_bp.route('/kiosk')
 @login_required
