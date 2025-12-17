@@ -84,7 +84,7 @@ class Logs(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(
+    username = db.Column(
         db.Integer,
         db.ForeignKey('user.id', ondelete='SET NULL'),
         index=True,

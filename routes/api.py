@@ -3,23 +3,26 @@ from datetime import datetime
 from flask_login import login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import db, User, Event, Student, Attendance, Logs
-import csv, os, pytz
+import csv, os, pytz, io
 
 api_bp = Blueprint('api', __name__)
 
 def systemLogEntry(action, details):
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
     try:
         entry = Logs(
             action=action,
             details=details,
-            username=getattr(current_user, 'username', None),
+            username=current_user.username if current_user.is_authenticated else "System",
             timestamp=datetime.now(pytz.timezone("Asia/Manila")),
-            client_ip=request.headers.get('X-Forwarded-For', request.remote_addr)
+            client_ip = ip.split(',')[0].strip() if ip else None
         )
         db.session.add(entry)
         db.session.commit()
     except Exception as e:
         db.session.rollback()
+        print("SYSTEM LOG ERROR:", e)
 
 @api_bp.route('/create-event', methods=['POST'])
 @login_required
@@ -188,19 +191,11 @@ def import_students_from_csv(csv_file):
 @login_required
 def upload_students_csv():
     if 'csv_file' not in request.files:
-        systemLogEntry(
-            action="Create",
-            details="Student CSV upload failed, no file part in request"
-        )
         return jsonify({'success': False, 'message': 'No file part'}), 400
 
     file = request.files['csv_file']
 
     if file.filename == '':
-        systemLogEntry(
-            action="Create",
-            details="Student CSV upload failed, no file selected"
-        )
         return jsonify({'success': False, 'message': 'No selected file'}), 400
 
     try:
@@ -211,17 +206,13 @@ def upload_students_csv():
         import_students_from_csv(filepath)
 
         systemLogEntry(
-            action="Create",
+            action="Import",
             details=f"Students imported successfully via CSV ({file.filename})"
         )
 
         return jsonify({'success': True, 'message': 'Students imported successfully!'}), 200
 
     except Exception as e:
-        systemLogEntry(
-            action="Create/Update",
-            details=f"Student CSV import failed. Error: {str(e)}"
-        )
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -309,8 +300,8 @@ def serialize_attendance(a):
     return {
         'name': a.student.full_name,
         'student_id': a.student_id,
-        'course': a.student.course,
-        'year': a.student.year,
+        'course': a.course,
+        'year': a.year,
         'timestamp': a.timestamp.strftime("%I:%M%p").lower()
     }
 
@@ -355,11 +346,6 @@ def get_attendees():
         'students': [serialize_attendance(a) for a in attendance]
     })
 
-import csv
-import io
-from flask import Response, request
-
-@api_bp.route('/export')
 @api_bp.route('/export')
 def export_csv():
     event_id = request.args.get('event_id', type=int)
@@ -367,7 +353,7 @@ def export_csv():
     if not event_id:
         return {"error": "event_id is required"}, 400
 
-    event = Event.query.get(event_id)
+    event = Event.query.filter(Event.id == event_id).first()
     if not event:
         return {"error": "Event not found"}, 404
 
@@ -453,6 +439,11 @@ def public_search():
                 "time": None
             })
 
+    systemLogEntry(
+        action="Search",
+        details=f"Student searched for {student.student_id}'s attendance records."
+    )
+
     return {
         "student": {
             "success": True,
@@ -476,8 +467,6 @@ def get_user(user_id):
         "username": user.username,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        # Your model doesn't have middle_name, so we send an empty string
-        # to prevent the Frontend JS from showing "undefined"
         "middle_name": "" 
     })
 
@@ -491,28 +480,23 @@ def change_password():
     new_pw = data.get('newPassword')
     confirm_pw = data.get('confirmPassword')
 
-    # 1. Basic Validation
     if not all([user_id, current_pw, new_pw]):
         return jsonify({"success": False, "error": "Missing fields"}), 400
 
     if new_pw != confirm_pw:
         return jsonify({"success": False, "error": "Passwords do not match"}), 400
 
-    # 2. Find User in DB
     user = db.session.get(User, user_id)
     if not user:
         return jsonify({"success": False, "error": "User not found"}), 404
 
-    # 3. Verify Old Password (Hash Check)
     if not check_password_hash(user.password, current_pw):
         return jsonify({"success": False, "error": "Incorrect current password"}), 401
 
-    # 4. Save New Password (Hash It)
     try:
         user.password = generate_password_hash(new_pw)
         db.session.commit()
 
-        # Log only on success
         systemLogEntry(
             action="Update",
             details=f"Password updated successfully for user '{user.username}' (ID: {user.id})"
