@@ -29,7 +29,7 @@ class Student(db.Model):
     full_name = db.Column(db.String(500), nullable=False)
     sex = db.Column(db.String(1))
     course = db.Column(db.String(255))
-    year = db.Column(db.String(10))
+    year = db.Column(db.String(1))
     status = db.Column(db.Boolean, default=True)
 
     attendances = db.relationship(
@@ -83,17 +83,8 @@ class Logs(db.Model):
     __tablename__ = 'system_logs'
 
     id = db.Column(db.Integer, primary_key=True)
-
-    username = db.Column(
-        db.Integer,
-        db.ForeignKey('user.id', ondelete='SET NULL'),
-        index=True,
-        nullable=True
-    )
-
+    username = db.Column(db.String(50), index=True, nullable=True)
     action = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     details = db.Column(db.Text)
     client_ip = db.Column(db.String(45))
-
-    user = db.relationship('User', back_populates='logs')
