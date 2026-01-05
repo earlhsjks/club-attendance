@@ -49,6 +49,59 @@
         </p>
     </footer>
 
+    <div id="privacy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm transition-all duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] animate-slide-up">
+            
+            <div class="p-6 border-b border-slate-100 shrink-0 flex items-center gap-3">
+                <div class="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shrink-0">
+                    <span class="material-icons-round">verified_user</span>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 leading-tight">Data Privacy & Terms</h2>
+                    <p class="text-xs text-slate-400 font-medium">Please review before proceeding</p>
+                </div>
+            </div>
+
+            <div class="p-6 overflow-y-auto text-sm text-slate-600 leading-relaxed space-y-4 scroller">
+                <p><strong>Data Privacy Notice and Terms of Use</strong></p>
+                
+                <p>This system is established for the purpose of recording and displaying club attendance records within the Computer Studies Department.</p>
+                
+                <p>The system contains student information collected by authorized club officers, limited to the following: Full Name, School ID Number, Course, Year Level, and Attendance Records. These data are processed solely for attendance verification, internal documentation, and department-related reporting. No personal data is collected or used for commercial, marketing, or external distribution purposes.</p>
+                
+                <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl">
+                    <p class="text-xs text-rose-700 font-semibold">
+                        <span class="font-bold">Prohibited:</span> Access to this system is strictly limited to viewing one’s own record only. Any attempt to access, search, or view another individual’s information, as well as any unauthorized copying, sharing, reproduction, or distribution of data, is strictly prohibited.
+                    </p>
+                </div>
+
+                <p>Information displayed in this system is provided for informational purposes and does not constitute an official academic or institutional record.</p>
+                
+                <p>Personal data are retained for the duration of the current academic year, unless continued retention is required for legitimate academic or organizational purposes. Requests for correction of inaccurate or incomplete information may be submitted to authorized club or department officers. Users are not permitted to directly modify stored records.</p>
+                
+                <p><strong>Data Removal:</strong> Students may submit a request for the removal of their personal data. Such requests shall be reviewed and acted upon when the data is no longer necessary for legitimate academic or organizational purposes. Where immediate removal is not feasible, the data may be restricted or archived in accordance with applicable policies.</p>
+                
+                <p class="text-xs text-slate-400 italic">By proceeding, you acknowledge that you have read, understood, and agreed to this Data Privacy Notice and Terms of Use, and that you accept responsibility for using the system strictly within its intended purpose and limitations.</p>
+            </div>
+
+            <div class="p-6 border-t border-slate-100 bg-slate-50 rounded-b-3xl shrink-0">
+                <label class="flex items-start gap-3 cursor-pointer mb-4 group select-none">
+                    <div class="relative flex items-center pt-0.5">
+                        <input type="checkbox" id="privacy-check" class="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-slate-300 transition-all checked:border-emerald-500 checked:bg-emerald-500 hover:border-emerald-400">
+                        <span class="material-icons-round absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[16px] text-white opacity-0 peer-checked:opacity-100 pointer-events-none">check</span>
+                    </div>
+                    <span class="text-xs font-bold text-slate-600 group-hover:text-slate-800 transition-colors leading-tight">
+                        I have read and agree to the Data Privacy Notice and Terms of Use
+                    </span>
+                </label>
+                
+                <button id="privacy-btn" disabled onclick="closePrivacyModal()" class="w-full bg-emerald-600 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 disabled:shadow-none transition-all flex justify-center items-center gap-2 active:scale-[0.98]">
+                    Proceed
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/public-search.js') }}"></script>
 </body>
 </html>

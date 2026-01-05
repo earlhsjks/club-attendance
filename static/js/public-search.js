@@ -117,3 +117,27 @@ document.getElementById('search-input').addEventListener("keypress", function(ev
         performSearch();
     }
 });
+
+const privacyModal = document.getElementById('privacy-modal');
+const privacyCheck = document.getElementById('privacy-check');
+const privacyBtn = document.getElementById('privacy-btn');
+
+privacyCheck.addEventListener('change', function() {
+    if (this.checked) {
+        privacyBtn.removeAttribute('disabled');
+        privacyBtn.classList.remove('disabled:bg-slate-300', 'disabled:shadow-none'); // Visual feedback
+    } else {
+        privacyBtn.setAttribute('disabled', 'true');
+    }
+});
+
+function closePrivacyModal() {
+    privacyModal.classList.add('opacity-0', 'pointer-events-none');  
+    sessionStorage.setItem('privacyAccepted', 'true');
+}
+
+window.addEventListener('load', () => {
+    if (sessionStorage.getItem('privacyAccepted') === 'true') {
+        privacyModal.style.display = 'none';
+    }
+});
