@@ -152,6 +152,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     await loadEvents(); 
     await checkActiveEvent();
     
-    document.getElementById("app").classList.remove("opacity-0");
-    document.getElementById("app").classList.add("opacity-100");
+    document.getElementById("skeleton").classList.add("hidden");
+    document.getElementById("main").classList.remove("hidden");
 });
