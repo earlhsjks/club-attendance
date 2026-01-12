@@ -372,12 +372,14 @@ def export_csv():
         writer.writerow([
             "Student ID",
             "Full Name",
+            "Timestamp"
         ])
 
         for attendance, student in records:
             writer.writerow([
                 student.student_id,
-                student.full_name
+                student.full_name,
+                attendance.timestamp
             ])
         return output.getvalue()
 
