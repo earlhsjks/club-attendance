@@ -30,10 +30,10 @@ def login():
         login_user(admin)
 
         # Log successful login
-        systemLogEntry(
-            action="Login",
-            details=f"User '{admin.username}' logged in successfully"
-        )
+        # systemLogEntry(
+        #     action="Login",
+        #     details=f"User '{admin.username}' logged in successfully"
+        # )
 
     except Exception as e:
         return jsonify({'success': False, 'error': f'Login failed: {str(e)}'}), 500

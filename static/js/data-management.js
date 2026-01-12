@@ -181,9 +181,9 @@ async function downloadCSV(eventId, name, date) {
 
 // Initialize on Load
 window.addEventListener("load", async () => { 
-    await loadStudents();
     await loadEvents();
-
+    await loadStudents();
+    
     document.getElementById("skeleton").classList.add("hidden");
     document.getElementById("main").classList.remove("hidden");
 });

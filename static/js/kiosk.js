@@ -233,10 +233,11 @@ setInterval(() => {
 
 // Initialize on Load
 window.addEventListener("DOMContentLoaded", async () => {
-    await safeStartScanner();
     await checkActiveEvent(); 
     await loadHistory(); 
+    
+    await document.getElementById("skeleton").classList.add("hidden");
+    await document.getElementById("main").classList.remove("hidden");
 
-    document.getElementById("skeleton").classList.add("hidden");
-    document.getElementById("main").classList.remove("hidden");
+    safeStartScanner();
 });
